@@ -32,7 +32,7 @@ setup(
         "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "torch>=1.9.0",
         "transformers>=4.20.0",
