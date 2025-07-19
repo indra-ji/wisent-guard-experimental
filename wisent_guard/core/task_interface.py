@@ -12,27 +12,27 @@ from .benchmark_extractors import BenchmarkExtractor
 
 class TaskInterface(ABC):
     """Abstract interface for benchmark tasks."""
-    
+
     @abstractmethod
     def load_data(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
         """Load task data."""
         pass
-    
+
     @abstractmethod
     def get_extractor(self) -> BenchmarkExtractor:
         """Get the benchmark extractor for this task."""
         pass
-    
+
     @abstractmethod
     def get_name(self) -> str:
         """Get the task name."""
         pass
-    
+
     @abstractmethod
     def get_description(self) -> str:
         """Get the task description."""
         pass
-    
+
     @abstractmethod
     def get_categories(self) -> List[str]:
         """Get the task categories (e.g., ['coding', 'reasoning'])."""
@@ -41,33 +41,35 @@ class TaskInterface(ABC):
 
 class TaskRegistry:
     """Registry for managing available tasks."""
-    
+
     def __init__(self):
         self._tasks: Dict[str, Type[TaskInterface]] = {}
-    
+
     def register_task(self, name: str, task_class: Type[TaskInterface]):
         """Register a new task."""
         self._tasks[name] = task_class
-    
+
     def get_task(self, name: str) -> TaskInterface:
         """Get a task instance by name."""
         if name not in self._tasks:
-            raise ValueError(f"Task '{name}' not found. Available tasks: {list(self._tasks.keys())}")
+            raise ValueError(
+                f"Task '{name}' not found. Available tasks: {list(self._tasks.keys())}"
+            )
         return self._tasks[name]()
-    
+
     def list_tasks(self) -> List[str]:
         """List all available task names."""
         return list(self._tasks.keys())
-    
+
     def get_task_info(self, name: str) -> Dict[str, Any]:
         """Get information about a specific task."""
         task = self.get_task(name)
         return {
             "name": task.get_name(),
             "description": task.get_description(),
-            "categories": task.get_categories()
+            "categories": task.get_categories(),
         }
-    
+
     def list_task_info(self) -> List[Dict[str, Any]]:
         """List information about all available tasks."""
         return [self.get_task_info(name) for name in self.list_tasks()]

@@ -17,17 +17,13 @@ def sample_livecodebench_data():
             "difficulty": "EASY",
             "platform": "LEETCODE",
             "public_test_cases": [
-                {
-                    "input": "[2,7,11,15], 9",
-                    "output": "[0,1]",
-                    "testtype": "FUNCTIONAL"
-                }
+                {"input": "[2,7,11,15], 9", "output": "[0,1]", "testtype": "FUNCTIONAL"}
             ],
             "contest_date": "2023-05-15",
             "metadata": {
                 "tags": ["array", "hash-table"],
-                "constraints": "2 <= nums.length <= 10^4"
-            }
+                "constraints": "2 <= nums.length <= 10^4",
+            },
         },
         {
             "task_id": "lcb_002",
@@ -37,17 +33,13 @@ def sample_livecodebench_data():
             "difficulty": "EASY",
             "platform": "LEETCODE",
             "public_test_cases": [
-                {
-                    "input": "\"()\"",
-                    "output": "true",
-                    "testtype": "FUNCTIONAL"
-                }
+                {"input": '"()"', "output": "true", "testtype": "FUNCTIONAL"}
             ],
             "contest_date": "2023-06-01",
             "metadata": {
                 "tags": ["string", "stack"],
-                "constraints": "1 <= s.length <= 10^4"
-            }
+                "constraints": "1 <= s.length <= 10^4",
+            },
         },
         {
             "task_id": "lcb_003",
@@ -60,15 +52,15 @@ def sample_livecodebench_data():
                 {
                     "input": "[10,9,2,5,3,7,101,18]",
                     "output": "4",
-                    "testtype": "FUNCTIONAL"
+                    "testtype": "FUNCTIONAL",
                 }
             ],
             "contest_date": "2023-07-10",
             "metadata": {
                 "tags": ["array", "binary-search", "dynamic-programming"],
-                "constraints": "1 <= nums.length <= 2500"
-            }
-        }
+                "constraints": "1 <= nums.length <= 2500",
+            },
+        },
     ]
 
 
@@ -150,7 +142,9 @@ class TestLiveCodeBenchIntegration:
         }
 
         correct_result = docker_mbpp_runner.run_mbpp_task(correct_task, docker_config)
-        incorrect_result = docker_mbpp_runner.run_mbpp_task(incorrect_task, docker_config)
+        incorrect_result = docker_mbpp_runner.run_mbpp_task(
+            incorrect_task, docker_config
+        )
 
         # Both should execute (Docker isolation), but incorrect should fail assertions
         assert correct_result["success"] is True
@@ -163,14 +157,14 @@ class TestLiveCodeBenchIntegration:
         # Test different difficulty levels
         easy_task = sample_livecodebench_data[0]  # Two Sum (EASY)
         medium_task = sample_livecodebench_data[2]  # LIS (MEDIUM)
-        
+
         # Convert to MBPP format
         easy_mbpp = {
             "task_id": easy_task["task_id"],
             "code": easy_task["starter_code"],
             "test_list": ["assert callable(two_sum)"],
         }
-        
+
         medium_mbpp = {
             "task_id": medium_task["task_id"],
             "code": medium_task["starter_code"],
@@ -192,7 +186,7 @@ class TestLiveCodeBenchIntegration:
         """Test that different platforms (LeetCode, AtCoder, CodeForces) are handled."""
         # All sample data is from LEETCODE platform
         leetcode_task = sample_livecodebench_data[0]
-        
+
         # Convert to MBPP format
         task = {
             "task_id": leetcode_task["task_id"],
@@ -213,7 +207,11 @@ class TestLiveCodeBenchPerformance:
     """Performance tests for LiveCodeBench execution."""
 
     def test_livecodebench_vs_mbpp_execution_time(
-        self, docker_mbpp_runner, sample_livecodebench_data, sample_mbpp_data, docker_config
+        self,
+        docker_mbpp_runner,
+        sample_livecodebench_data,
+        sample_mbpp_data,
+        docker_config,
     ):
         """Compare execution time between LiveCodeBench and MBPP tasks."""
         import time
@@ -224,7 +222,7 @@ class TestLiveCodeBenchPerformance:
             "code": sample_livecodebench_data[0]["starter_code"],
             "test_list": ["assert callable(two_sum)"],
         }
-        
+
         mbpp_task = sample_mbpp_data[0]
 
         # Time LiveCodeBench execution
@@ -240,7 +238,7 @@ class TestLiveCodeBenchPerformance:
         # Both should complete successfully
         assert lcb_result["success"] is True
         assert mbpp_result["success"] is True
-        
+
         # Performance comparison (both should be fast with mocks)
         assert lcb_time < 2.0  # Less than 2 seconds
         assert mbpp_time < 2.0  # Less than 2 seconds
@@ -270,7 +268,7 @@ class TestLiveCodeBenchPerformance:
         assert len(results) == len(sample_livecodebench_data)
         for result in results:
             assert result["success"] is True
-            
+
         # Performance check
         assert batch_time < 5.0  # Less than 5 seconds for batch
 
@@ -282,20 +280,23 @@ class TestLiveCodeBenchExtractorIntegration:
 
     def test_livecodebench_extractor_availability(self):
         """Test that LiveCodeBench extractor is available."""
-        from wisent_guard.core.benchmark_extractors import get_extractor, LiveCodeBenchExtractor
-        
-        extractor = get_extractor('livecodebench')
+        from wisent_guard.core.benchmark_extractors import (
+            get_extractor,
+            LiveCodeBenchExtractor,
+        )
+
+        extractor = get_extractor("livecodebench")
         assert isinstance(extractor, LiveCodeBenchExtractor)
 
     def test_livecodebench_qa_pair_extraction(self, sample_livecodebench_data):
         """Test QA pair extraction from LiveCodeBench document."""
         from wisent_guard.core.benchmark_extractors import LiveCodeBenchExtractor
-        
+
         extractor = LiveCodeBenchExtractor()
         doc = sample_livecodebench_data[0]
-        
+
         qa_pair = extractor.extract_qa_pair(doc)
-        
+
         assert qa_pair is not None
         assert "question" in qa_pair
         assert "formatted_question" in qa_pair
@@ -308,47 +309,51 @@ class TestLiveCodeBenchExtractorIntegration:
     def test_livecodebench_contrastive_pair_extraction(self, sample_livecodebench_data):
         """Test contrastive pair extraction from LiveCodeBench document."""
         from wisent_guard.core.benchmark_extractors import LiveCodeBenchExtractor
-        
+
         extractor = LiveCodeBenchExtractor()
         doc = sample_livecodebench_data[0]
-        
+
         contrastive_pair = extractor.extract_contrastive_pair(doc)
-        
+
         assert contrastive_pair is not None
         assert "question" in contrastive_pair
         assert "correct_answer" in contrastive_pair
         assert "incorrect_answer" in contrastive_pair
-        assert contrastive_pair["correct_answer"] != contrastive_pair["incorrect_answer"]
+        assert (
+            contrastive_pair["correct_answer"] != contrastive_pair["incorrect_answer"]
+        )
 
     def test_livecodebench_error_handling(self):
         """Test error handling for malformed LiveCodeBench documents."""
         from wisent_guard.core.benchmark_extractors import LiveCodeBenchExtractor
-        
+
         extractor = LiveCodeBenchExtractor()
-        
+
         # Test with empty document
         empty_doc = {}
         result = extractor.extract_qa_pair(empty_doc)
         assert result is None
-        
+
         # Test with missing required fields
         incomplete_doc = {"question_title": "Test"}
         result = extractor.extract_qa_pair(incomplete_doc)
         assert result is None
 
-    def test_livecodebench_platform_and_difficulty_handling(self, sample_livecodebench_data):
+    def test_livecodebench_platform_and_difficulty_handling(
+        self, sample_livecodebench_data
+    ):
         """Test that platform and difficulty are properly included in extracted data."""
         from wisent_guard.core.benchmark_extractors import LiveCodeBenchExtractor
-        
+
         extractor = LiveCodeBenchExtractor()
-        
+
         # Test different difficulties
         easy_doc = sample_livecodebench_data[0]  # EASY
         medium_doc = sample_livecodebench_data[2]  # MEDIUM
-        
+
         easy_result = extractor.extract_qa_pair(easy_doc)
         medium_result = extractor.extract_qa_pair(medium_doc)
-        
+
         assert "EASY" in easy_result["formatted_question"]
         assert "MEDIUM" in medium_result["formatted_question"]
         assert "LEETCODE" in easy_result["formatted_question"]

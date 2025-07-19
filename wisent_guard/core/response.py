@@ -4,8 +4,10 @@ class Response:
         self.activations = activations
         self.label = label
 
+
 class PositiveResponse(Response):
     pass
 
+
 class NegativeResponse(Response):
-    pass 
+    pass

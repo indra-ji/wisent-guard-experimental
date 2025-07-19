@@ -55,38 +55,47 @@ class SecureCodeEvaluator:
 
         Args:
             docker_config: Docker configuration options
-            
+
         Raises:
             RuntimeError: If Docker is not available or not running
         """
         # Filter out configs that OptimizedDockerExecutor doesn't accept
         executor_config = docker_config or {}
-        valid_params = {"image_name", "build_if_missing", "enable_batching", "enable_resource_optimization"}
-        filtered_config = {k: v for k, v in executor_config.items() if k in valid_params}
-        
+        valid_params = {
+            "image_name",
+            "build_if_missing",
+            "enable_batching",
+            "enable_resource_optimization",
+        }
+        filtered_config = {
+            k: v for k, v in executor_config.items() if k in valid_params
+        }
+
         try:
             self.executor = OptimizedDockerExecutor(
                 **filtered_config,
                 enable_batching=True,
-                enable_resource_optimization=True
+                enable_resource_optimization=True,
             )
         except RuntimeError as e:
             # Docker is not available - fail hard with clear message
             logger.error(f"Docker is required for code execution tasks: {e}")
             raise RuntimeError(
-                f"\n{'='*60}\n"
+                f"\n{'=' * 60}\n"
                 f"ERROR: Docker is required for code execution tasks\n"
-                f"{'='*60}\n"
+                f"{'=' * 60}\n"
                 f"{str(e)}\n\n"
                 f"Please ensure Docker is:\n"
                 f"1. Installed on your system\n"
                 f"2. Running (start Docker Desktop or daemon)\n"
                 f"3. Accessible to the current user\n"
-                f"{'='*60}\n"
+                f"{'=' * 60}\n"
             )
-        
+
         # Store additional config separately if needed
-        self.runtime_config = {k: v for k, v in executor_config.items() if k not in valid_params}
+        self.runtime_config = {
+            k: v for k, v in executor_config.items() if k not in valid_params
+        }
         self.docker_config = docker_config or {}
 
     @classmethod
@@ -149,7 +158,7 @@ class SecureCodeEvaluator:
         # Create test execution code
         test_code = "\n".join(docker_task["test_list"])
         full_code = f"{code}\n\n# Run tests\n{test_code}"
-        
+
         result = self.executor.execute_single(full_code)
 
         # Add task-specific information
@@ -236,7 +245,9 @@ class SecureCodeEvaluator:
         """Get information about the Docker executor."""
         return {
             "executor_type": type(self.executor).__name__,
-            "image_name": getattr(self.executor, "image_name", "wisent-guard-codeexec:latest"),
+            "image_name": getattr(
+                self.executor, "image_name", "wisent-guard-codeexec:latest"
+            ),
             "timeout": getattr(self.executor, "timeout", 10),
             "memory_limit": getattr(self.executor, "memory_limit", "256m"),
             "cpu_limit": getattr(self.executor, "cpu_limit", 0.5),

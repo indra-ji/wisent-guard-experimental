@@ -10,42 +10,48 @@ from ..data_loaders import LiveCodeBenchLoader
 
 class LiveCodeBenchTask(TaskInterface):
     """LiveCodeBench task implementation."""
-    
+
     def __init__(self, release_version: str = "release_v1"):
         self._extractor = LiveCodeBenchExtractor()
         self._data_loader = LiveCodeBenchLoader()
         self._release_version = release_version
         self._validate_release_version(release_version)
-    
+
     def _validate_release_version(self, release_version: str) -> None:
         """Validate release version."""
         valid_versions = set(self._data_loader.list_available_versions())
         if release_version not in valid_versions:
-            raise ValueError(f"Invalid release version: {release_version}. Valid versions: {valid_versions}")
-    
+            raise ValueError(
+                f"Invalid release version: {release_version}. Valid versions: {valid_versions}"
+            )
+
     def _get_version_info(self) -> Dict[str, Any]:
         """Get version-specific information."""
         return self._data_loader.get_version_info(self._release_version)
-    
+
     def load_data(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
         """Load LiveCodeBench data for the specified release version."""
         try:
             # Load real LiveCodeBench data
             problems = self._data_loader.load_problems(
-                release_version=self._release_version,
-                limit=limit
+                release_version=self._release_version, limit=limit
             )
-            
+
             # Convert to dictionary format
             return [problem.to_dict() for problem in problems]
-            
+
         except Exception as e:
             # Fallback to sample data if loading fails
             import logging
-            logging.warning(f"Failed to load real LiveCodeBench data: {e}. Using sample data.")
+
+            logging.warning(
+                f"Failed to load real LiveCodeBench data: {e}. Using sample data."
+            )
             return self._generate_sample_data_fallback(limit)
-    
-    def _generate_sample_data_fallback(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
+
+    def _generate_sample_data_fallback(
+        self, limit: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """Generate sample data for the specified number of problems."""
         base_problems = [
             {
@@ -59,14 +65,14 @@ class LiveCodeBenchTask(TaskInterface):
                     {
                         "input": "[2,7,11,15], 9",
                         "output": "[0,1]",
-                        "testtype": "FUNCTIONAL"
+                        "testtype": "FUNCTIONAL",
                     }
                 ],
                 "contest_date": "2023-05-15",
                 "metadata": {
                     "tags": ["array", "hash-table"],
-                    "constraints": "2 <= nums.length <= 10^4"
-                }
+                    "constraints": "2 <= nums.length <= 10^4",
+                },
             },
             {
                 "task_id": "lcb_002",
@@ -76,17 +82,13 @@ class LiveCodeBenchTask(TaskInterface):
                 "difficulty": "EASY",
                 "platform": "LEETCODE",
                 "public_test_cases": [
-                    {
-                        "input": "\"()\"",
-                        "output": "true",
-                        "testtype": "FUNCTIONAL"
-                    }
+                    {"input": '"()"', "output": "true", "testtype": "FUNCTIONAL"}
                 ],
                 "contest_date": "2023-06-01",
                 "metadata": {
                     "tags": ["string", "stack"],
-                    "constraints": "1 <= s.length <= 10^4"
-                }
+                    "constraints": "1 <= s.length <= 10^4",
+                },
             },
             {
                 "task_id": "lcb_003",
@@ -99,14 +101,14 @@ class LiveCodeBenchTask(TaskInterface):
                     {
                         "input": "[10,9,2,5,3,7,101,18]",
                         "output": "4",
-                        "testtype": "FUNCTIONAL"
+                        "testtype": "FUNCTIONAL",
                     }
                 ],
                 "contest_date": "2023-07-10",
                 "metadata": {
                     "tags": ["array", "binary-search", "dynamic-programming"],
-                    "constraints": "1 <= nums.length <= 2500"
-                }
+                    "constraints": "1 <= nums.length <= 2500",
+                },
             },
             {
                 "task_id": "lcb_004",
@@ -119,14 +121,14 @@ class LiveCodeBenchTask(TaskInterface):
                     {
                         "input": "[1,2,4], [1,3,4]",
                         "output": "[1,1,2,3,4,4]",
-                        "testtype": "FUNCTIONAL"
+                        "testtype": "FUNCTIONAL",
                     }
                 ],
                 "contest_date": "2023-08-01",
                 "metadata": {
                     "tags": ["linked-list", "recursion"],
-                    "constraints": "0 <= list1.length, list2.length <= 50"
-                }
+                    "constraints": "0 <= list1.length, list2.length <= 50",
+                },
             },
             {
                 "task_id": "lcb_005",
@@ -136,43 +138,39 @@ class LiveCodeBenchTask(TaskInterface):
                 "difficulty": "EASY",
                 "platform": "LEETCODE",
                 "public_test_cases": [
-                    {
-                        "input": "[7,1,5,3,6,4]",
-                        "output": "5",
-                        "testtype": "FUNCTIONAL"
-                    }
+                    {"input": "[7,1,5,3,6,4]", "output": "5", "testtype": "FUNCTIONAL"}
                 ],
                 "contest_date": "2023-09-15",
                 "metadata": {
                     "tags": ["array", "dynamic-programming"],
-                    "constraints": "1 <= prices.length <= 10^5"
-                }
-            }
+                    "constraints": "1 <= prices.length <= 10^5",
+                },
+            },
         ]
-        
+
         # Generate limited sample data for fallback
         if limit:
             base_problems = base_problems[:limit]
-        
+
         # Add version-specific metadata
         for problem in base_problems:
             problem["release_version"] = self._release_version
-        
+
         return base_problems
-    
+
     def get_extractor(self) -> BenchmarkExtractor:
         """Get the LiveCodeBench extractor."""
         return self._extractor
-    
+
     def get_name(self) -> str:
         """Get the task name."""
         return "livecodebench"
-    
+
     def get_description(self) -> str:
         """Get the task description."""
         version_info = self._get_version_info()
         return f"LiveCodeBench {self._release_version}: Contamination-free coding benchmark with {version_info['problems']} problems ({version_info['date_range']}) from LeetCode, AtCoder, and CodeForces"
-    
+
     def get_categories(self) -> List[str]:
         """Get the task categories."""
         return ["coding", "reasoning", "algorithms", "data-structures"]
@@ -181,11 +179,11 @@ class LiveCodeBenchTask(TaskInterface):
 # TODO: In a real implementation, this would integrate with the actual LiveCodeBench library
 # Example integration:
 # from livecodebench import LiveCodeBench
-# 
+#
 # class LiveCodeBenchTask(TaskInterface):
 #     def __init__(self):
 #         self._lcb = LiveCodeBench()
 #         self._extractor = LiveCodeBenchExtractor()
-#     
+#
 #     def load_data(self, limit: Optional[int] = None) -> List[Dict[str, Any]]:
 #         return self._lcb.load_problems(limit=limit)

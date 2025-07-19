@@ -13,7 +13,7 @@ def register_all_tasks():
     """Register all available tasks."""
     # Register LiveCodeBench task
     register_task("livecodebench", LiveCodeBenchTask)
-    
+
     # Register common lm-eval tasks
     register_task("mbpp", MBPPTask)
     register_task("gsm8k", GSM8KTask)
@@ -27,9 +27,9 @@ register_all_tasks()
 
 __all__ = [
     "LiveCodeBenchTask",
-    "MBPPTask", 
+    "MBPPTask",
     "GSM8KTask",
     "TruthfulQATask",
     "MMLUTask",
-    "register_all_tasks"
+    "register_all_tasks",
 ]

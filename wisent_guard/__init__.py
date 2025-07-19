@@ -20,7 +20,7 @@ from .core import (
     ContrastivePairSet,
     Classifier,
     ActivationClassifier,
-    SteeringMethod
+    SteeringMethod,
 )
 
 __version__ = "0.4.2"
@@ -28,13 +28,12 @@ __version__ = "0.4.2"
 __all__ = [
     # Main classes
     "WisentGuard",
-    "SafeInference", 
+    "SafeInference",
     "ContrastiveVectors",
-    
     # Core primitives
     "Model",
     "PromptFormat",
-    "TokenScore", 
+    "TokenScore",
     "ModelParameterOptimizer",
     "ActivationHooks",
     "Activations",
@@ -43,5 +42,5 @@ __all__ = [
     "ContrastivePairSet",
     "Classifier",
     "ActivationClassifier",
-    "SteeringMethod"
-] 
+    "SteeringMethod",
+]

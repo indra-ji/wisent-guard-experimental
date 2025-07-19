@@ -12,6 +12,7 @@ import os
 
 class BenchmarkType(Enum):
     """Supported benchmark types."""
+
     LIVECODEBENCH = "livecodebench"
     BIGCODE = "bigcode"
     HUMANEVAL = "humaneval"
@@ -21,36 +22,36 @@ class BenchmarkType(Enum):
 @dataclass
 class BenchmarkConfig:
     """Configuration for a specific benchmark."""
-    
+
     name: str
     benchmark_type: BenchmarkType
-    
+
     # Model configuration
     model_path: str
     model_format: str = "huggingface"  # huggingface, vllm, etc.
-    
+
     # Evaluation parameters
     temperature: float = 0.2
     max_length: int = 512
     n_samples: int = 1  # for pass@k evaluation
     batch_size: int = 1
     timeout: int = 30
-    
+
     # Benchmark-specific parameters
     dataset_version: Optional[str] = None  # e.g., "v1", "v2" for LiveCodeBench
     task_subset: Optional[str] = None  # e.g., "python" for language-specific tasks
     problem_limit: Optional[int] = None  # limit number of problems for testing
-    
+
     # Execution environment
     allow_code_execution: bool = True
     use_docker: bool = True
     gpu_device: Optional[str] = "auto"
-    
+
     # Output configuration
     output_dir: str = "./evaluation_results"
     cache_generations: bool = True
     continue_existing: bool = True
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert config to dictionary."""
         return {
@@ -71,38 +72,38 @@ class BenchmarkConfig:
             "gpu_device": self.gpu_device,
             "output_dir": self.output_dir,
             "cache_generations": self.cache_generations,
-            "continue_existing": self.continue_existing
+            "continue_existing": self.continue_existing,
         }
 
 
 @dataclass
 class BenchmarkResult:
     """Results from a benchmark evaluation."""
-    
+
     benchmark_name: str
     benchmark_type: BenchmarkType
     model_path: str
-    
+
     # Evaluation metrics
     pass_at_1: Optional[float] = None
     pass_at_5: Optional[float] = None
     pass_at_10: Optional[float] = None
-    
+
     # Additional metrics
     total_problems: int = 0
     solved_problems: int = 0
     compilation_rate: Optional[float] = None
     average_time: Optional[float] = None
-    
+
     # Metadata
     timestamp: str = None
     duration_seconds: float = 0.0
     config: Optional[BenchmarkConfig] = None
-    
+
     # Raw results
     detailed_results: Dict[str, Any] = None
     error_messages: List[str] = None
-    
+
     def __post_init__(self):
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
@@ -110,7 +111,7 @@ class BenchmarkResult:
             self.error_messages = []
         if self.detailed_results is None:
             self.detailed_results = {}
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert result to dictionary."""
         return {
@@ -128,28 +129,28 @@ class BenchmarkResult:
             "duration_seconds": self.duration_seconds,
             "config": self.config.to_dict() if self.config else None,
             "detailed_results": self.detailed_results,
-            "error_messages": self.error_messages
+            "error_messages": self.error_messages,
         }
-    
+
     def save_to_file(self, filepath: str):
         """Save result to JSON file."""
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             json.dump(self.to_dict(), f, indent=2)
-    
+
     @classmethod
     def load_from_file(cls, filepath: str) -> "BenchmarkResult":
         """Load result from JSON file."""
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
-        
+
         # Convert config back to BenchmarkConfig if present
         config = None
         if data.get("config"):
             config_data = data["config"]
             config_data["benchmark_type"] = BenchmarkType(config_data["benchmark_type"])
             config = BenchmarkConfig(**config_data)
-        
+
         return cls(
             benchmark_name=data["benchmark_name"],
             benchmark_type=BenchmarkType(data["benchmark_type"]),
@@ -165,30 +166,30 @@ class BenchmarkResult:
             duration_seconds=data.get("duration_seconds", 0.0),
             config=config,
             detailed_results=data.get("detailed_results", {}),
-            error_messages=data.get("error_messages", [])
+            error_messages=data.get("error_messages", []),
         )
 
 
 class BenchmarkRegistry:
     """Registry for benchmark configurations."""
-    
+
     _benchmarks = {}
-    
+
     @classmethod
     def register(cls, config: BenchmarkConfig):
         """Register a benchmark configuration."""
         cls._benchmarks[config.name] = config
-    
+
     @classmethod
     def get(cls, name: str) -> Optional[BenchmarkConfig]:
         """Get benchmark configuration by name."""
         return cls._benchmarks.get(name)
-    
+
     @classmethod
     def list_benchmarks(cls) -> List[str]:
         """List all registered benchmark names."""
         return list(cls._benchmarks.keys())
-    
+
     @classmethod
     def get_default_configs(cls) -> Dict[str, BenchmarkConfig]:
         """Get default benchmark configurations."""
@@ -202,7 +203,7 @@ class BenchmarkRegistry:
                 temperature=0.2,
                 max_length=512,
                 problem_limit=None,
-                output_dir="./evaluation_results/livecodebench"
+                output_dir="./evaluation_results/livecodebench",
             ),
             "humaneval": BenchmarkConfig(
                 name="humaneval",
@@ -212,7 +213,7 @@ class BenchmarkRegistry:
                 temperature=0.2,
                 max_length=512,
                 problem_limit=None,
-                output_dir="./evaluation_results/humaneval"
+                output_dir="./evaluation_results/humaneval",
             ),
             "mbpp": BenchmarkConfig(
                 name="mbpp",
@@ -222,8 +223,8 @@ class BenchmarkRegistry:
                 temperature=0.2,
                 max_length=512,
                 problem_limit=None,
-                output_dir="./evaluation_results/mbpp"
-            )
+                output_dir="./evaluation_results/mbpp",
+            ),
         }
 
 

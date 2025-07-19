@@ -21,7 +21,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/wisent-activation-guardrails",  # Replace with your GitHub repo
-    packages=find_packages(exclude=["patches", "patches.*"]),  # Exclude patches directory
+    packages=find_packages(
+        exclude=["patches", "patches.*"]
+    ),  # Exclude patches directory
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -46,4 +48,4 @@ setup(
         ],
     },
     keywords="nlp, machine learning, language models, safety, guardrails, lm-evaluation-harness",
-) 
+)

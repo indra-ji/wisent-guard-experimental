@@ -12,13 +12,13 @@ from typing import Dict, Any, List
 def setup_test_environment():
     """Set up test environment for all tests."""
     # Set environment variable for code evaluation
-    os.environ['HF_ALLOW_CODE_EVAL'] = '1'
-    
+    os.environ["HF_ALLOW_CODE_EVAL"] = "1"
+
     # Set other test-specific environment variables if needed
     original_env = dict(os.environ)
-    
+
     yield
-    
+
     # Restore original environment
     os.environ.clear()
     os.environ.update(original_env)
@@ -160,6 +160,7 @@ def docker_mbpp_runner():
     """Create a Docker MBPP runner instance with real Docker."""
     try:
         import docker
+
         client = docker.from_env()
         # Test if Docker is actually running
         client.ping()

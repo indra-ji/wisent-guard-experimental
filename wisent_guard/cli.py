@@ -255,7 +255,9 @@ def print_valid_tasks_by_category():
                 else (
                     "⚡"
                     if priority == "medium"
-                    else "🐌" if priority == "low" else "❓"
+                    else "🐌"
+                    if priority == "low"
+                    else "❓"
                 )
             )
             print(
@@ -725,7 +727,9 @@ def run_task_pipeline(
             print("   1. Install Docker: https://docs.docker.com/get-docker/")
             print("   2. Start Docker daemon")
             print("   3. Ensure your user has Docker permissions")
-            print("\n⚠️  Code execution tasks CANNOT run without Docker for security reasons")
+            print(
+                "\n⚠️  Code execution tasks CANNOT run without Docker for security reasons"
+            )
             sys.exit(1)
 
     # AUTOMATICALLY SET LM-EVAL-HARNESS AS DEFAULT FOR TESTED TASKS
@@ -1031,9 +1035,9 @@ def run_task_pipeline(
     display_name = task_name if not (from_csv or from_json) else f"file:{task_name}"
 
     if verbose:
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"🚀 STARTING PIPELINE FOR TASK: {display_name.upper()}")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
         print("📋 Configuration:")
         print(f"   • Model: {model_name}")
         print(f"   • Layer: {layer}")
@@ -1423,28 +1427,34 @@ def run_task_pipeline(
                         elif testing_limit is not None:
                             # Only testing limit specified, calculate total based on split ratio
                             # Add 20% buffer to account for rounding
-                            total_limit = int(testing_limit / (1 - split_ratio) * 1.2) + 1
-                    
+                            total_limit = (
+                                int(testing_limit / (1 - split_ratio) * 1.2) + 1
+                            )
+
                     task_data = model.load_lm_eval_task(
                         actual_task_name, shots=shots, limit=total_limit
                     )
                     train_docs, test_docs = model.split_task_data(
                         task_data, split_ratio=split_ratio, random_seed=seed
                     )
-                    
+
                     # Apply training and testing limits if specified
                     original_train_size = len(train_docs)
                     original_test_size = len(test_docs)
-                    
+
                     if training_limit is not None and len(train_docs) > training_limit:
                         train_docs = train_docs[:training_limit]
                         if verbose:
-                            print(f"   ⚠️  Training data limited to {training_limit} samples (from {original_train_size})")
-                    
+                            print(
+                                f"   ⚠️  Training data limited to {training_limit} samples (from {original_train_size})"
+                            )
+
                     if testing_limit is not None and len(test_docs) > testing_limit:
                         test_docs = test_docs[:testing_limit]
                         if verbose:
-                            print(f"   ⚠️  Test data limited to {testing_limit} samples (from {original_test_size})")
+                            print(
+                                f"   ⚠️  Test data limited to {testing_limit} samples (from {original_test_size})"
+                            )
 
                     if verbose:
                         print(
@@ -1471,18 +1481,26 @@ def run_task_pipeline(
                             if training_limit is not None or testing_limit is not None:
                                 # Need enough samples to satisfy both limits after split
                                 # Add buffer to ensure we have enough after splitting
-                                if training_limit is not None and testing_limit is not None:
+                                if (
+                                    training_limit is not None
+                                    and testing_limit is not None
+                                ):
                                     cache_limit = training_limit + testing_limit
                                 elif training_limit is not None:
                                     # Add 20% buffer to account for rounding
-                                    cache_limit = int(training_limit / split_ratio * 1.2) + 1
+                                    cache_limit = (
+                                        int(training_limit / split_ratio * 1.2) + 1
+                                    )
                                 elif testing_limit is not None:
                                     # Add 20% buffer to account for rounding
-                                    cache_limit = int(testing_limit / (1 - split_ratio) * 1.2) + 1
-                            
+                                    cache_limit = (
+                                        int(testing_limit / (1 - split_ratio) * 1.2) + 1
+                                    )
+
                             cached_samples = managed_cache.get_task_samples(
                                 task_name=task_name,
-                                limit=cache_limit or 1000,  # Default to 1000 if no limit
+                                limit=cache_limit
+                                or 1000,  # Default to 1000 if no limit
                                 force_fresh=force_download,
                             )
 
@@ -1534,20 +1552,24 @@ def run_task_pipeline(
                 # We used cached data, process it for the pipeline
                 # Properly split the data using the split ratio with limits
                 # Use training_limit and testing_limit if specified, otherwise use defaults
-                MAX_TRAIN_SAMPLES = training_limit if training_limit is not None else 1000
+                MAX_TRAIN_SAMPLES = (
+                    training_limit if training_limit is not None else 1000
+                )
                 MAX_TEST_SAMPLES = testing_limit if testing_limit is not None else 200
 
                 split_point = int(len(all_qa_pairs) * split_ratio)
                 qa_pairs = all_qa_pairs[:split_point]  # Training data
                 test_qa_pairs_source = all_qa_pairs[split_point:]  # Test data
-                
+
                 if verbose:
-                    print(f"📊 Initial split: {len(qa_pairs)} training, {len(test_qa_pairs_source)} test samples")
+                    print(
+                        f"📊 Initial split: {len(qa_pairs)} training, {len(test_qa_pairs_source)} test samples"
+                    )
 
                 # Apply limits
                 original_train_size = len(qa_pairs)
                 original_test_size = len(test_qa_pairs_source)
-                
+
                 if len(qa_pairs) > MAX_TRAIN_SAMPLES:
                     qa_pairs = qa_pairs[:MAX_TRAIN_SAMPLES]
                     if verbose:
@@ -1558,10 +1580,14 @@ def run_task_pipeline(
                 if len(test_qa_pairs_source) > MAX_TEST_SAMPLES:
                     test_qa_pairs_source = test_qa_pairs_source[:MAX_TEST_SAMPLES]
                     if verbose:
-                        print(f"   ⚠️  Test data limited to {MAX_TEST_SAMPLES} samples (from {original_test_size})")
-                        
+                        print(
+                            f"   ⚠️  Test data limited to {MAX_TEST_SAMPLES} samples (from {original_test_size})"
+                        )
+
                 if verbose:
-                    print(f"📊 Final data split: {len(qa_pairs)} training, {len(test_qa_pairs_source)} test samples")
+                    print(
+                        f"📊 Final data split: {len(qa_pairs)} training, {len(test_qa_pairs_source)} test samples"
+                    )
                 group_task_processed = False
                 group_task_qa_format = True  # Cached data is already in QA format
 
@@ -1569,7 +1595,7 @@ def run_task_pipeline(
             print(f"   • Successfully extracted {len(qa_pairs)} QA pairs")
             print("\n🔍 Training Examples:")
             for i, qa_pair in enumerate(qa_pairs[:4]):  # Show first 4
-                print(f"\n   📋 Example {i+1}:")
+                print(f"\n   📋 Example {i + 1}:")
                 question_preview = (
                     qa_pair["question"][:100] + "..."
                     if len(qa_pair["question"]) > 100
@@ -1648,7 +1674,7 @@ def run_task_pipeline(
                     print(
                         f"\n🎉 PERPLEXITY EVALUATION COMPLETED FOR {task_name.upper()}!"
                     )
-                    print(f"{'='*80}")
+                    print(f"{'=' * 80}")
                     print("📊 FINAL RESULTS:")
                     print(f"   • Test samples: {len(test_qa_pairs_source)}")
                     print(f"   • Evaluation method: {evaluation_method}")
@@ -1661,7 +1687,7 @@ def run_task_pipeline(
                         print(f"   • Average perplexity score: {avg_score:.3f}")
                     else:
                         print("   • Perplexity evaluation: Completed")
-                    print(f"{'='*80}")
+                    print(f"{'=' * 80}")
 
                 return {
                     "task_name": task_name,
@@ -1763,7 +1789,7 @@ def run_task_pipeline(
         if verbose:
             print(f"\n🔄 Created {len(contrastive_pairs)} contrastive pairs:")
             for i, pair in enumerate(contrastive_pairs[:3]):  # Show first 3
-                print(f"\n   🔄 Contrastive Pair {i+1}:")
+                print(f"\n   🔄 Contrastive Pair {i + 1}:")
                 print(f"      📝 Prompt: {pair.prompt}")
                 print(f"      🟢 Positive (B): {pair.positive_response}")
                 print(f"      🔴 Negative (A): {pair.negative_response}")
@@ -2107,14 +2133,18 @@ def run_task_pipeline(
                     hasattr(pair_set.pairs[i], "positive_response")
                     and pair_set.pairs[i].positive_response
                 ):
-                    pair_set.pairs[i].positive_response.activations = (
+                    pair_set.pairs[
+                        i
+                    ].positive_response.activations = (
                         processed_pair.positive_activations
                     )
                 if (
                     hasattr(pair_set.pairs[i], "negative_response")
                     and pair_set.pairs[i].negative_response
                 ):
-                    pair_set.pairs[i].negative_response.activations = (
+                    pair_set.pairs[
+                        i
+                    ].negative_response.activations = (
                         processed_pair.negative_activations
                     )
 
@@ -2463,7 +2493,7 @@ def run_task_pipeline(
                     if verbose:
                         print("\n🔍 Generating performance report...")
                     print("\n📊 PERFORMANCE REPORT:")
-                    print(f"{'='*50}")
+                    print(f"{'=' * 50}")
 
                     if memory_tracker:
                         if verbose:
@@ -2497,7 +2527,7 @@ def run_task_pipeline(
                                 f"\n📄 Performance data exported to: {export_performance_csv}"
                             )
 
-                    print(f"{'='*50}")
+                    print(f"{'=' * 50}")
 
                 # Return steering mode results with proper evaluation data
                 return {
@@ -2535,7 +2565,7 @@ def run_task_pipeline(
                         if verbose:
                             print("\n🔍 Generating performance report (error case)...")
                         print("\n📊 PERFORMANCE REPORT:")
-                        print(f"{'='*50}")
+                        print(f"{'=' * 50}")
 
                         if memory_tracker:
                             if verbose:
@@ -2571,7 +2601,7 @@ def run_task_pipeline(
                                     f"\n📄 Performance data exported to: {export_performance_csv}"
                                 )
 
-                            print(f"{'='*50}")
+                            print(f"{'=' * 50}")
                     except Exception as perf_error:
                         if verbose:
                             print(
@@ -2793,14 +2823,18 @@ def run_task_pipeline(
                             hasattr(layer_pair_set.pairs[i], "positive_response")
                             and layer_pair_set.pairs[i].positive_response
                         ):
-                            layer_pair_set.pairs[i].positive_response.activations = (
+                            layer_pair_set.pairs[
+                                i
+                            ].positive_response.activations = (
                                 processed_pair.positive_activations
                             )
                         if (
                             hasattr(layer_pair_set.pairs[i], "negative_response")
                             and layer_pair_set.pairs[i].negative_response
                         ):
-                            layer_pair_set.pairs[i].negative_response.activations = (
+                            layer_pair_set.pairs[
+                                i
+                            ].negative_response.activations = (
                                 processed_pair.negative_activations
                             )
 
@@ -3175,7 +3209,7 @@ The task will be skipped in optimization."""
                 print(
                     f"\n🎉 LM-EVAL-HARNESS EVALUATION COMPLETED FOR {task_name.upper()}!"
                 )
-                print(f"{'='*80}")
+                print(f"{'=' * 80}")
                 print("📊 FINAL RESULTS:")
                 print(f"   • Training samples: {len(contrastive_pairs)}")
                 print(f"   • Test samples: {len(test_qa_pairs_source)}")
@@ -3199,7 +3233,7 @@ The task will be skipped in optimization."""
 
                 print(f"   • Correct predictions: {correct_classifications}")
                 print(f"   • Total evaluated: {total_classifications}")
-                print(f"{'='*80}")
+                print(f"{'=' * 80}")
 
             results = {
                 "task_name": task_name,
@@ -3279,7 +3313,7 @@ The task will be skipped in optimization."""
                 )
                 print("\n🔍 Test Questions:")
                 for i, qa_pair in enumerate(test_qa_pairs):
-                    print(f"\n   📋 Question {i+1}:")
+                    print(f"\n   📋 Question {i + 1}:")
                     print(
                         f"      🔸 Question: {qa_pair['question'][:100]}{'...' if len(qa_pair['question']) > 100 else ''}"
                     )
@@ -3306,7 +3340,7 @@ The task will be skipped in optimization."""
                     locals().get("cached_layer_activations", [])
                 ):
                     if verbose and not optimize:
-                        print(f"\n   🎯 Processing cached response {i+1}:")
+                        print(f"\n   🎯 Processing cached response {i + 1}:")
                         print(
                             f"      📝 Question: {cached_item['question'][:100]}{'...' if len(cached_item['question']) > 100 else ''}"
                         )
@@ -3440,7 +3474,7 @@ The task will be skipped in optimization."""
                     if (
                         verbose and not optimize
                     ):  # Only show detailed progress when not optimizing
-                        print(f"\n   🎯 Generating response {i+1}:")
+                        print(f"\n   🎯 Generating response {i + 1}:")
                         print(
                             f"      📝 Question: {qa_pair['question'][:100]}{'...' if len(qa_pair['question']) > 100 else ''}"
                         )
@@ -3726,7 +3760,7 @@ The task will be skipped in optimization."""
 
             if verbose:
                 print(f"\n🎉 OPTIMIZATION PIPELINE COMPLETED FOR {task_name.upper()}!")
-                print(f"{'='*80}")
+                print(f"{'=' * 80}")
                 print("📊 FINAL RESULTS:")
                 print(f"   • Training samples: {len(contrastive_pairs)}")
                 print(f"   • Test samples: {len(test_qa_pairs)}")
@@ -3747,7 +3781,7 @@ The task will be skipped in optimization."""
                     )
                 else:
                     print("   • Classification accuracy: Could not evaluate")
-                print(f"{'='*80}\n")
+                print(f"{'=' * 80}\n")
 
             logger.info(f"Optimization pipeline completed for {task_name}")
             return results
@@ -3817,7 +3851,7 @@ The task will be skipped in optimization."""
                 print(f"   • Successfully extracted {len(test_qa_pairs)} test QA pairs")
                 print("\n🔍 Test Examples:")
                 for i, qa_pair in enumerate(test_qa_pairs):
-                    print(f"\n   📋 Test Example {i+1}:")
+                    print(f"\n   📋 Test Example {i + 1}:")
                     print(
                         f"      🔸 Question: {qa_pair['question'][:100]}{'...' if len(qa_pair['question']) > 100 else ''}"
                     )
@@ -3949,7 +3983,7 @@ The task will be skipped in optimization."""
                 if (
                     verbose and not optimize
                 ):  # Only show detailed progress when not optimizing
-                    print(f"\n   🎯 Generating response {i+1}:")
+                    print(f"\n   🎯 Generating response {i + 1}:")
                     print(
                         f"      📝 Question: {qa_pair['question'][:100]}{'...' if len(qa_pair['question']) > 100 else ''}"
                     )
@@ -4145,7 +4179,7 @@ The task will be skipped in optimization."""
 
             if verbose:
                 print(f"\n🎉 PIPELINE COMPLETED FOR {task_name.upper()}!")
-                print(f"{'='*80}")
+                print(f"{'=' * 80}")
                 print("📊 FINAL RESULTS:")
                 print(f"   • Training samples: {len(contrastive_pairs)}")
                 print(f"   • Test samples: {len(test_qa_pairs)}")
@@ -4160,14 +4194,14 @@ The task will be skipped in optimization."""
                     )
                 else:
                     print("   • Classification accuracy: Could not evaluate")
-                print(f"{'='*80}\n")
+                print(f"{'=' * 80}\n")
 
             # Generate performance report
             if enable_memory_tracking or enable_latency_tracking or show_timing_summary:
                 if verbose:
                     print("\n🔍 Generating performance report...")
                 print("\n📊 PERFORMANCE REPORT:")
-                print(f"{'='*50}")
+                print(f"{'=' * 50}")
 
                 if memory_tracker:
                     if verbose:
@@ -4195,7 +4229,7 @@ The task will be skipped in optimization."""
                             f"\n📄 Performance data exported to: {export_performance_csv}"
                         )
 
-                print(f"{'='*50}")
+                print(f"{'=' * 50}")
 
             # Save test activations if requested
             if (
@@ -4346,7 +4380,7 @@ def _generate_test_scenarios(
 ) -> List[str]:
     """Generate test scenarios for evaluating the steering method."""
     return [
-        f"Test scenario {i+1} for {trait_description}" for i in range(num_scenarios)
+        f"Test scenario {i + 1} for {trait_description}" for i in range(num_scenarios)
     ]
 
 
@@ -4363,7 +4397,7 @@ def handle_tasks_command(args):
         metadata_dir = cache_dir / "metadata"
 
         print("📊 CACHE STATUS")
-        print(f"{'='*50}")
+        print(f"{'=' * 50}")
         print(f"Cache directory: {args.cache_dir}")
 
         if not cache_dir.exists():
@@ -4456,46 +4490,49 @@ def handle_tasks_command(args):
         print(f"🚀 Running ALL {len(AVAILABLE_BENCHMARKS)} available benchmarks:")
         print(f"   {', '.join(sorted(AVAILABLE_BENCHMARKS.keys()))}")
         print(f"   Using --limit {args.limit or 'unlimited'} samples per benchmark\n")
-    
+
     # Handle --skills/--risks based task selection
     elif hasattr(args, "skills") and (args.skills or args.risks):
         from .core.task_selector import TaskSelector
+
         selector = TaskSelector()
-        
+
         # Validate and show selection criteria
         if args.skills:
             print(f"🎯 Selecting tasks by skills: {', '.join(args.skills)}")
         if args.risks:
             print(f"⚠️  Selecting tasks by risks: {', '.join(args.risks)}")
-        
+
         # Find matching tasks
         selected_tasks = selector.select_random_tasks(
             skills=args.skills,
             risks=args.risks,
             num_tasks=args.num_tasks,
             min_quality_score=args.min_quality_score,
-            seed=args.task_seed
+            seed=args.task_seed,
         )
-        
+
         if not selected_tasks:
             print("❌ No tasks found matching the specified skills/risks criteria")
             print("💡 Available skills:", ", ".join(selector.get_available_skills()))
             print("💡 Available risks:", ", ".join(selector.get_available_risks()))
             sys.exit(1)
-        
+
         # Filter to only include available benchmarks
         selected_tasks = [t for t in selected_tasks if t in AVAILABLE_BENCHMARKS]
-        
+
         if not selected_tasks:
             print("❌ No available benchmarks match the specified criteria")
             print("   (Some matching tasks may be in the unavailable/problematic list)")
             sys.exit(1)
-        
+
         args.task_names = ",".join(selected_tasks)
         print(f"📋 Selected {len(selected_tasks)} tasks from skills/risks criteria")
         if args.verbose:
-            print(f"   Tasks: {', '.join(selected_tasks[:10])}" + 
-                  (" ..." if len(selected_tasks) > 10 else ""))
+            print(
+                f"   Tasks: {', '.join(selected_tasks[:10])}"
+                + (" ..." if len(selected_tasks) > 10 else "")
+            )
 
     task_sources = []
 
@@ -4579,9 +4616,9 @@ def handle_tasks_command(args):
         try:
             # Show progress when processing multiple tasks
             if len(task_sources) > 1:
-                print(f"\n{'='*60}")
+                print(f"\n{'=' * 60}")
                 print(f"📊 TASK {i}/{len(task_sources)}: {source.upper()}")
-                print(f"{'='*60}")
+                print(f"{'=' * 60}")
 
             # Determine source type
             from_csv = source.endswith(".csv") or args.from_csv
@@ -4777,7 +4814,9 @@ def handle_tasks_command(args):
                 # Benchmark caching parameters
                 cache_benchmark=getattr(args, "cache_benchmark", False),
                 # When --no-cache is used, it sets cache_benchmark to False, so use_cached should also be False
-                use_cached=getattr(args, "cache_benchmark", True),  # Use cache_benchmark value
+                use_cached=getattr(
+                    args, "cache_benchmark", True
+                ),  # Use cache_benchmark value
                 force_download=getattr(args, "force_download", False),
                 cache_dir=getattr(args, "cache_dir", "./benchmark_cache"),
                 # Model reuse parameter for efficiency
@@ -5499,7 +5538,7 @@ def handle_sample_size_optimization_command(args):
     try:
         # Determine if we're optimizing for classification or steering
         method_type = "steering" if args.steering_mode else "classification"
-        
+
         # Check if we should verify parameters match existing config (for classification)
         if method_type == "classification" and not args.force:
             from .core.model_config_manager import ModelConfigManager
@@ -5565,15 +5604,15 @@ def handle_sample_size_optimization_command(args):
         print(f"   📋 Task: {args.task}")
         print(f"   📊 Layer: {args.layer}")
         print(f"   📊 Token aggregation: {args.token_aggregation}")
-        
+
         if method_type == "classification":
             print(f"   📊 Threshold: {args.threshold}")
         else:  # steering
             print(f"   🎯 Steering method: {args.steering_method}")
             print(f"   💪 Steering strength: {args.steering_strength}")
-            if hasattr(args, 'token_targeting_strategy'):
+            if hasattr(args, "token_targeting_strategy"):
                 print(f"   🎯 Token targeting: {args.token_targeting_strategy}")
-        
+
         print(f"   🔢 Sample sizes: {args.sample_sizes}")
         print(f"   📊 Test size: {args.test_size}")
         print(f"   🌱 Random seed: {args.seed}")
@@ -5587,18 +5626,24 @@ def handle_sample_size_optimization_command(args):
         method_kwargs = {
             "token_aggregation": args.token_aggregation,
         }
-        
+
         if method_type == "classification":
-            method_kwargs.update({
-                "threshold": args.threshold,
-                "classifier_type": getattr(args, 'classifier_type', 'logistic')
-            })
+            method_kwargs.update(
+                {
+                    "threshold": args.threshold,
+                    "classifier_type": getattr(args, "classifier_type", "logistic"),
+                }
+            )
         else:  # steering
-            method_kwargs.update({
-                "steering_method": args.steering_method,
-                "steering_strength": args.steering_strength,
-                "token_targeting_strategy": getattr(args, 'token_targeting_strategy', 'LAST_TOKEN')
-            })
+            method_kwargs.update(
+                {
+                    "steering_method": args.steering_method,
+                    "steering_strength": args.steering_strength,
+                    "token_targeting_strategy": getattr(
+                        args, "token_targeting_strategy", "LAST_TOKEN"
+                    ),
+                }
+            )
 
         # Run optimization
         results = optimize_sample_size(
@@ -5613,17 +5658,17 @@ def handle_sample_size_optimization_command(args):
             verbose=args.verbose,
             save_plot=args.save_plot,
             save_to_config=not args.no_save_config,
-            **method_kwargs
+            **method_kwargs,
         )
 
         # Display results
         print(f"\n✅ Optimal sample size: {results['optimal_sample_size']}")
-        
+
         # Only show details if verbose
         if args.verbose:
-            if results.get('optimal_accuracy') is not None:
+            if results.get("optimal_accuracy") is not None:
                 print(f"   Accuracy at optimal size: {results['optimal_accuracy']:.3f}")
-            
+
             # Show all tested sizes
             all_results = results.get("all_results", {})
             if all_results.get("sample_sizes"):
@@ -5660,31 +5705,36 @@ def handle_full_optimization_command(args):
         elif args.skills or args.risks:
             # Use task selector to find tasks by skills/risks
             from .core.task_selector import TaskSelector
+
             selector = TaskSelector()
-            
+
             # Validate skills and risks
             if args.skills:
                 print(f"   🎯 Skills: {', '.join(args.skills)}")
             if args.risks:
                 print(f"   ⚠️  Risks: {', '.join(args.risks)}")
-            
+
             # Find matching tasks
             tasks = selector.select_random_tasks(
                 skills=args.skills,
                 risks=args.risks,
                 num_tasks=args.num_tasks,
                 min_quality_score=args.min_quality_score,
-                seed=args.task_seed
+                seed=args.task_seed,
             )
-            
+
             if not tasks:
                 print("❌ No tasks found matching the specified skills/risks criteria")
                 sys.exit(1)
-                
-            print(f"   📋 Tasks: {len(tasks)} tasks selected from skills/risks criteria")
+
+            print(
+                f"   📋 Tasks: {len(tasks)} tasks selected from skills/risks criteria"
+            )
             if args.verbose:
-                print(f"      Selected tasks: {', '.join(tasks[:5])}" + 
-                      (" ..." if len(tasks) > 5 else ""))
+                print(
+                    f"      Selected tasks: {', '.join(tasks[:5])}"
+                    + (" ..." if len(tasks) > 5 else "")
+                )
         else:
             # Use all available tasks
             tasks = get_valid_task_names()
@@ -5761,10 +5811,10 @@ def handle_full_optimization_command(args):
             def classification_progress_callback(task_idx, task_name, status):
                 """Callback to track classification progress."""
                 if status == "completed":
-                    print(f"   ✅ [{task_idx+1}/{len(tasks)}] {task_name} optimized")
+                    print(f"   ✅ [{task_idx + 1}/{len(tasks)}] {task_name} optimized")
                 elif status == "started":
                     print(
-                        f"   🔄 [{task_idx+1}/{len(tasks)}] Optimizing {task_name}..."
+                        f"   🔄 [{task_idx + 1}/{len(tasks)}] Optimizing {task_name}..."
                     )
 
             from .core.classification_optimizer import run_classification_optimization
@@ -5815,7 +5865,7 @@ def handle_full_optimization_command(args):
             sample_size_results = {}
             for idx, task in enumerate(tasks):
                 print(
-                    f"\n   📋 [{idx+1}/{len(tasks)}] Optimizing sample size for {task}..."
+                    f"\n   📋 [{idx + 1}/{len(tasks)}] Optimizing sample size for {task}..."
                 )
 
                 # Get task-specific parameters
@@ -5893,7 +5943,7 @@ def handle_full_optimization_command(args):
                 for idx, task in enumerate(tasks):
                     try:
                         print(
-                            f"\n   🎯 [{idx+1}/{len(tasks)}] Training classifier for {task}..."
+                            f"\n   🎯 [{idx + 1}/{len(tasks)}] Training classifier for {task}..."
                         )
 
                         # Get task-specific parameters
@@ -5993,7 +6043,7 @@ def handle_full_optimization_command(args):
                 for idx, task in enumerate(tasks):
                     try:
                         print(
-                            f"\n   🎯 [{idx+1}/{len(tasks)}] Training control vector for {task}..."
+                            f"\n   🎯 [{idx + 1}/{len(tasks)}] Training control vector for {task}..."
                         )
 
                         # Get task-specific parameters
@@ -6160,28 +6210,34 @@ def handle_full_optimization_command(args):
             print(f"   🔧 Testing methods: {', '.join(args.steering_methods)}")
             print(f"   📊 Layer range: {args.steering_layer_range or 'auto'}")
             print(f"   💪 Strength range: {args.steering_strength_range}")
-            
+
             from .core.steering_optimizer import run_steering_optimization
-            
+
             steering_results = {}
             for idx, task in enumerate(tasks):
                 try:
-                    print(f"\n   🔄 [{idx+1}/{len(tasks)}] Optimizing steering for {task}...")
-                    
+                    print(
+                        f"\n   🔄 [{idx + 1}/{len(tasks)}] Optimizing steering for {task}..."
+                    )
+
                     # Determine layer range
                     if args.steering_layer_range:
                         # Use the layer range string directly
                         layer_range_str = args.steering_layer_range
                     else:
                         # Use optimal classification layer
-                        optimal_layer = model_config.get("optimal_parameters", {}).get("classification_layer", 0)
+                        optimal_layer = model_config.get("optimal_parameters", {}).get(
+                            "classification_layer", 0
+                        )
                         layer_range_str = str(optimal_layer)
-                    
+
                     # Run steering optimization
                     print(f"      • Debug: Testing methods {args.steering_methods}")
                     print(f"      • Debug: Layer range: {layer_range_str}")
-                    print(f"      • Debug: Strength range: {args.steering_strength_range}")
-                    
+                    print(
+                        f"      • Debug: Strength range: {args.steering_strength_range}"
+                    )
+
                     result = run_steering_optimization(
                         model_name=args.model,
                         optimization_type="method_comparison",
@@ -6193,34 +6249,41 @@ def handle_full_optimization_command(args):
                         layer_range=layer_range_str,
                         strength_range=args.steering_strength_range,
                     )
-                    
+
                     if result:
                         # Handle SteeringOptimizationSummary object
-                        if hasattr(result, 'best_overall_method'):
+                        if hasattr(result, "best_overall_method"):
                             # Extract best configuration from summary
                             best_method = result.best_overall_method
                             best_layer = result.best_overall_layer
                             best_strength = result.best_overall_strength
-                            
+
                             # Find accuracy from task results
                             best_accuracy = 0.0
                             if result.task_results:
                                 for task_result in result.task_results:
-                                    if (task_result.best_steering_method == best_method and 
-                                        task_result.best_steering_layer == best_layer):
-                                        best_accuracy = task_result.steering_effectiveness_score
+                                    if (
+                                        task_result.best_steering_method == best_method
+                                        and task_result.best_steering_layer
+                                        == best_layer
+                                    ):
+                                        best_accuracy = (
+                                            task_result.steering_effectiveness_score
+                                        )
                                         break
-                            
-                            print(f"      ✅ Best method: {best_method} (layer {best_layer}, strength {best_strength})")
+
+                            print(
+                                f"      ✅ Best method: {best_method} (layer {best_layer}, strength {best_strength})"
+                            )
                             print(f"      📊 Effectiveness: {best_accuracy:.3f}")
-                            
+
                             steering_results[task] = {
                                 "method": best_method,
                                 "layer": best_layer,
                                 "strength": best_strength,
-                                "accuracy": best_accuracy
+                                "accuracy": best_accuracy,
                             }
-                            
+
                             # Save to model config
                             if "steering_optimization" not in model_config:
                                 model_config["steering_optimization"] = {}
@@ -6229,15 +6292,17 @@ def handle_full_optimization_command(args):
                                 "layer": best_layer,
                                 "strength": best_strength,
                                 "accuracy": best_accuracy,
-                                "optimized_date": datetime.now().isoformat()
+                                "optimized_date": datetime.now().isoformat(),
                             }
                         # Handle dictionary result (backward compatibility)
                         elif isinstance(result, dict) and result.get("overall_best"):
                             best = result["overall_best"]
-                            print(f"      ✅ Best method: {best['method']} (layer {best['layer']}, strength {best['strength']})")
+                            print(
+                                f"      ✅ Best method: {best['method']} (layer {best['layer']}, strength {best['strength']})"
+                            )
                             print(f"      📊 Accuracy: {best['accuracy']:.3f}")
                             steering_results[task] = best
-                            
+
                             # Save to model config
                             if "steering_optimization" not in model_config:
                                 model_config["steering_optimization"] = {}
@@ -6246,29 +6311,37 @@ def handle_full_optimization_command(args):
                                 "layer": best["layer"],
                                 "strength": best["strength"],
                                 "accuracy": best["accuracy"],
-                                "optimized_date": datetime.now().isoformat()
+                                "optimized_date": datetime.now().isoformat(),
                             }
                         else:
-                            print("      ❌ Steering optimization failed - unexpected result format")
+                            print(
+                                "      ❌ Steering optimization failed - unexpected result format"
+                            )
                     else:
                         print("      ❌ Steering optimization failed")
-                        
+
                 except Exception as e:
                     print(f"      ❌ Error: {e}")
                     if args.verbose:
                         import traceback
+
                         traceback.print_exc()
-            
+
             if steering_results:
                 print("\n✅ Steering method optimization completed!")
                 print(f"   📊 Optimized {len(steering_results)}/{len(tasks)} tasks")
-                
+
                 # Find most common method
                 from collections import Counter
+
                 methods = [r["method"] for r in steering_results.values()]
-                most_common = Counter(methods).most_common(1)[0] if methods else ("CAA", 0)
-                print(f"   🏆 Most common best method: {most_common[0]} ({most_common[1]}/{len(methods)} tasks)")
-                
+                most_common = (
+                    Counter(methods).most_common(1)[0] if methods else ("CAA", 0)
+                )
+                print(
+                    f"   🏆 Most common best method: {most_common[0]} ({most_common[1]}/{len(methods)} tasks)"
+                )
+
                 # Save to config
                 config_manager.update_model_config(args.model, model_config)
         else:
@@ -6278,28 +6351,34 @@ def handle_full_optimization_command(args):
         if not args.skip_steering and not args.skip_sample_size:
             print("\n📏 Step 6: Steering Sample Size Optimization")
             print("   🎯 Finding optimal training size for steering methods")
-            
+
             steering_sample_results = {}
             for idx, task in enumerate(tasks):
                 try:
                     # Get best steering method for this task
-                    best_steering = model_config.get("steering_optimization", {}).get(task)
-                    if not best_steering or best_steering.get('method') == 'none':
-                        print(f"\n   ⏭️  [{idx+1}/{len(tasks)}] Skipping {task} (no valid steering method found)")
+                    best_steering = model_config.get("steering_optimization", {}).get(
+                        task
+                    )
+                    if not best_steering or best_steering.get("method") == "none":
+                        print(
+                            f"\n   ⏭️  [{idx + 1}/{len(tasks)}] Skipping {task} (no valid steering method found)"
+                        )
                         continue
-                        
-                    print(f"\n   🔄 [{idx+1}/{len(tasks)}] Optimizing sample size for {task}...")
+
+                    print(
+                        f"\n   🔄 [{idx + 1}/{len(tasks)}] Optimizing sample size for {task}..."
+                    )
                     print(f"      • Method: {best_steering['method']}")
                     print(f"      • Layer: {best_steering['layer']}")
                     print(f"      • Strength: {best_steering['strength']}")
-                    
+
                     # Run sample size optimization for steering
                     from .core.sample_size_optimizer_v2 import optimize_sample_size
-                    
+
                     sample_result = optimize_sample_size(
                         model_name=args.model,
                         task_name=task,
-                        layer=best_steering['layer'],
+                        layer=best_steering["layer"],
                         method_type="steering",
                         sample_sizes=args.sample_sizes,
                         test_size=min(200, args.steering_limit or 200),
@@ -6307,46 +6386,55 @@ def handle_full_optimization_command(args):
                         verbose=False,
                         save_plot=args.save_plots,
                         save_to_config=False,  # We'll save manually
-                        steering_method=best_steering['method'],
-                        steering_strength=best_steering['strength'],
+                        steering_method=best_steering["method"],
+                        steering_strength=best_steering["strength"],
                     )
-                    
+
                     if sample_result and sample_result.get("optimal_sample_size"):
                         optimal_size = sample_result["optimal_sample_size"]
                         print(f"      ✅ Optimal sample size: {optimal_size}")
-                        print(f"      📊 Accuracy: {sample_result.get('optimal_accuracy', 'N/A')}")
+                        print(
+                            f"      📊 Accuracy: {sample_result.get('optimal_accuracy', 'N/A')}"
+                        )
                         steering_sample_results[task] = optimal_size
-                        
+
                         # Save to model config
                         if "steering_sample_sizes" not in model_config:
                             model_config["steering_sample_sizes"] = {}
                         model_config["steering_sample_sizes"][task] = {
-                            str(best_steering['layer']): optimal_size,
-                            "method": best_steering['method'],
-                            "strength": best_steering['strength']
+                            str(best_steering["layer"]): optimal_size,
+                            "method": best_steering["method"],
+                            "strength": best_steering["strength"],
                         }
                     else:
                         print("      ❌ Sample size optimization failed")
-                        
+
                 except Exception as e:
                     print(f"      ❌ Error: {e}")
                     if args.verbose:
                         import traceback
+
                         traceback.print_exc()
-            
+
             if steering_sample_results:
                 print("\n✅ Steering sample size optimization completed!")
-                print(f"   📊 Optimized {len(steering_sample_results)}/{len(tasks)} tasks")
-                
+                print(
+                    f"   📊 Optimized {len(steering_sample_results)}/{len(tasks)} tasks"
+                )
+
                 # Calculate average sample size
-                avg_size = sum(steering_sample_results.values()) / len(steering_sample_results)
+                avg_size = sum(steering_sample_results.values()) / len(
+                    steering_sample_results
+                )
                 print(f"   📏 Average optimal sample size: {avg_size:.0f}")
-                
+
                 # Save to config
                 config_manager.update_model_config(args.model, model_config)
         else:
             if args.skip_steering:
-                print("\n⏭️  Skipping steering sample size optimization (steering skipped)")
+                print(
+                    "\n⏭️  Skipping steering sample size optimization (steering skipped)"
+                )
             else:
                 print("\n⏭️  Skipping steering sample size optimization")
 

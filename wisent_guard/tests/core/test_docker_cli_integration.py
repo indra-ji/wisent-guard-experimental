@@ -112,14 +112,16 @@ class TestDockerConfigurationIntegration:
             "image_name": "custom-mbpp:latest",
         }
 
-        with patch('wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor') as mock_executor_class:
+        with patch(
+            "wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor"
+        ) as mock_executor_class:
             mock_executor = MagicMock()
             mock_executor.timeout = 30
             mock_executor.memory_limit = "512m"
             mock_executor.cpu_limit = 1.0
             mock_executor.image_name = "custom-mbpp:latest"
             mock_executor_class.return_value = mock_executor
-            
+
             evaluator = SecureCodeEvaluator(docker_config=docker_config)
 
             # Verify configuration is applied
@@ -128,7 +130,7 @@ class TestDockerConfigurationIntegration:
             assert evaluator.executor.cpu_limit == 1.0
             assert evaluator.executor.image_name == "custom-mbpp:latest"
 
-    @patch('wisent_guard.core.docker.optimized_docker_executor.OptimizedDockerExecutor')
+    @patch("wisent_guard.core.docker.optimized_docker_executor.OptimizedDockerExecutor")
     def test_executor_info_includes_security_settings(self, mock_executor_class):
         """Test that executor info includes all security settings."""
         mock_executor = MagicMock()
@@ -137,7 +139,7 @@ class TestDockerConfigurationIntegration:
         mock_executor.memory_limit = "256m"
         mock_executor.cpu_limit = 0.5
         mock_executor_class.return_value = mock_executor
-        
+
         evaluator = SecureCodeEvaluator()
         info = evaluator.get_executor_info()
 
@@ -196,9 +198,9 @@ class TestCLISecurityMessages:
             if "🔒" in msg or "secure" in msg.lower() or "docker" in msg.lower()
         ]
 
-        assert (
-            len(security_messages) > 0
-        ), "No security messages found in verbose output"
+        assert len(security_messages) > 0, (
+            "No security messages found in verbose output"
+        )
 
     @patch("builtins.print")
     @patch("wisent_guard.core.secure_code_evaluator.SecureCodeEvaluator")
@@ -231,11 +233,13 @@ class TestDockerPerformanceIntegration:
     def test_docker_executor_respects_timeout(self):
         """Test that Docker executor respects timeout configuration."""
         short_timeout_config = {"timeout": 1}  # 1 second
-        with patch('wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor') as mock_executor_class:
+        with patch(
+            "wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor"
+        ) as mock_executor_class:
             mock_executor = MagicMock()
             mock_executor.timeout = 1
             mock_executor_class.return_value = mock_executor
-            
+
             evaluator = SecureCodeEvaluator(docker_config=short_timeout_config)
 
             assert evaluator.executor.timeout == 1
@@ -243,12 +247,14 @@ class TestDockerPerformanceIntegration:
     def test_docker_executor_respects_resource_limits(self):
         """Test that Docker executor respects resource limits."""
         resource_config = {"memory_limit": "128m", "cpu_limit": 0.25}
-        with patch('wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor') as mock_executor_class:
+        with patch(
+            "wisent_guard.core.secure_code_evaluator.OptimizedDockerExecutor"
+        ) as mock_executor_class:
             mock_executor = MagicMock()
             mock_executor.memory_limit = "128m"
             mock_executor.cpu_limit = 0.25
             mock_executor_class.return_value = mock_executor
-            
+
             evaluator = SecureCodeEvaluator(docker_config=resource_config)
 
             assert evaluator.executor.memory_limit == "128m"

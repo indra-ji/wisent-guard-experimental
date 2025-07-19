@@ -20,38 +20,41 @@ import hashlib
 @dataclass
 class DeviceBenchmark:
     """Performance benchmark results for a specific device."""
+
     device_id: str
     device_type: str  # "cpu", "cuda", "mps", etc.
     model_loading_seconds: float
     benchmark_eval_seconds_per_100_examples: float
-    classifier_training_seconds_per_100_samples: float  # Actually measures full classifier creation time (per 100 classifiers)
+    classifier_training_seconds_per_100_samples: (
+        float  # Actually measures full classifier creation time (per 100 classifiers)
+    )
     data_generation_seconds_per_example: float
     steering_seconds_per_example: float
     benchmark_timestamp: float
     python_version: str
     platform_info: str
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return asdict(self)
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'DeviceBenchmark':
+    def from_dict(cls, data: Dict[str, Any]) -> "DeviceBenchmark":
         """Create from dictionary loaded from JSON."""
         return cls(**data)
 
 
 class DeviceBenchmarker:
     """Runs performance benchmarks and manages device-specific estimates."""
-    
+
     def __init__(self, benchmarks_file: str = "device_benchmarks.json"):
         self.benchmarks_file = benchmarks_file
         self.cached_benchmark: Optional[DeviceBenchmark] = None
-        
+
     def get_device_id(self) -> str:
         """Generate a unique ID for the current device configuration."""
         import platform
-        
+
         # Create device fingerprint from hardware/software info
         info_parts = [
             platform.machine(),
@@ -60,92 +63,94 @@ class DeviceBenchmarker:
             platform.release(),
             sys.version,
         ]
-        
+
         # Add GPU info if available
         try:
             import torch
+
             if torch.cuda.is_available():
                 info_parts.append(f"cuda_{torch.cuda.get_device_name()}")
             elif torch.backends.mps.is_available():
                 info_parts.append("mps")
         except ImportError:
             pass
-        
+
         # Create hash of the combined info
         combined = "|".join(str(part) for part in info_parts)
         device_hash = hashlib.md5(combined.encode()).hexdigest()[:12]
         return device_hash
-    
+
     def get_device_type(self) -> str:
         """Detect the device type (cpu, cuda, mps, etc.)."""
         try:
             import torch
+
             if torch.cuda.is_available():
                 return "cuda"
             elif torch.backends.mps.is_available():
-                return "mps" 
+                return "mps"
             else:
                 return "cpu"
         except ImportError:
             return "cpu"
-    
+
     def load_cached_benchmark(self) -> Optional[DeviceBenchmark]:
         """Load cached benchmark results if they exist and are recent."""
         if not os.path.exists(self.benchmarks_file):
             return None
-            
+
         try:
-            with open(self.benchmarks_file, 'r') as f:
+            with open(self.benchmarks_file, "r") as f:
                 data = json.load(f)
-            
+
             device_id = self.get_device_id()
             if device_id not in data:
                 return None
-                
+
             benchmark_data = data[device_id]
             benchmark = DeviceBenchmark.from_dict(benchmark_data)
-            
+
             # Check if benchmark is recent (within 7 days)
             current_time = time.time()
             age_days = (current_time - benchmark.benchmark_timestamp) / (24 * 3600)
-            
+
             if age_days > 7:
                 print(f"   ⚠️ Cached benchmark is {age_days:.1f} days old, will re-run")
                 return None
-                
+
             return benchmark
-            
+
         except Exception as e:
             print(f"   ⚠️ Error loading cached benchmark: {e}")
             return None
-    
+
     def save_benchmark(self, benchmark: DeviceBenchmark) -> None:
         """Save benchmark results to JSON file."""
         try:
             # Load existing data
             existing_data = {}
             if os.path.exists(self.benchmarks_file):
-                with open(self.benchmarks_file, 'r') as f:
+                with open(self.benchmarks_file, "r") as f:
                     existing_data = json.load(f)
-            
+
             # Update with new benchmark
             existing_data[benchmark.device_id] = benchmark.to_dict()
-            
+
             # Save back to file
-            with open(self.benchmarks_file, 'w') as f:
+            with open(self.benchmarks_file, "w") as f:
                 json.dump(existing_data, f, indent=2)
-                
+
             print(f"   💾 Saved benchmark results to {self.benchmarks_file}")
-            
+
         except Exception as e:
             print(f"   ❌ Error saving benchmark: {e}")
-    
+
     def run_model_loading_benchmark(self) -> float:
         """Benchmark actual model loading time using the real model."""
         print("   📊 Benchmarking model loading...")
-        
+
         # Create actual model loading test script
-        test_script = '''
+        test_script = """
 import time
 import sys
 sys.path.append('.')
@@ -160,39 +165,42 @@ try:
 except Exception as e:
     print(f"BENCHMARK_ERROR:{e}")
     raise
-'''
-        
+"""
+
         try:
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(test_script)
                 temp_script = f.name
-            
+
             # Run with 2-minute timeout
-            result = subprocess.run([
-                sys.executable, temp_script
-            ], capture_output=True, text=True, timeout=120)
-            
+            result = subprocess.run(
+                [sys.executable, temp_script],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+
             # Clean up
             os.unlink(temp_script)
-            
+
             # Parse result
-            for line in result.stdout.split('\n'):
-                if line.startswith('BENCHMARK_RESULT:'):
-                    loading_time = float(line.split(':')[1])
+            for line in result.stdout.split("\n"):
+                if line.startswith("BENCHMARK_RESULT:"):
+                    loading_time = float(line.split(":")[1])
                     print(f"      Model loading: {loading_time:.1f}s")
                     return loading_time
-                    
+
         except Exception as e:
             print(f"      Error in model loading benchmark: {e}")
             raise RuntimeError(f"Model loading benchmark failed: {e}")
-    
+
     def run_benchmark_eval_test(self) -> float:
         """Benchmark evaluation performance using real CLI functionality."""
         print("   📊 Benchmarking evaluation performance...")
         print("   🔧 DEBUG: Creating evaluation test script...")
-        
+
         # Create evaluation test script using actual CLI
-        test_script = '''
+        test_script = """
 import time
 import sys
 sys.path.append('.')
@@ -231,60 +239,66 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     raise
-'''
-        
+"""
+
         print("   🔧 DEBUG: Writing test script to temporary file...")
         try:
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(test_script)
                 temp_script = f.name
             print(f"   🔧 DEBUG: Test script written to {temp_script}")
-            
+
             print("   🔧 DEBUG: Running evaluation subprocess...")
-            result = subprocess.run([
-                sys.executable, temp_script
-            ], capture_output=True, text=True, timeout=120)  # 2-minute timeout
-            
-            print(f"   🔧 DEBUG: Subprocess completed with return code: {result.returncode}")
+            result = subprocess.run(
+                [sys.executable, temp_script],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )  # 2-minute timeout
+
+            print(
+                f"   🔧 DEBUG: Subprocess completed with return code: {result.returncode}"
+            )
             print(f"   🔧 DEBUG: Stdout length: {len(result.stdout)} chars")
             print(f"   🔧 DEBUG: Stderr length: {len(result.stderr)} chars")
-            
+
             if result.stderr:
                 print(f"   ⚠️ DEBUG: Stderr content:\n{result.stderr}")
-            
+
             os.unlink(temp_script)
             print("   🔧 DEBUG: Temporary script cleaned up")
-            
+
             # Parse result
             print("   🔧 DEBUG: Parsing output for BENCHMARK_RESULT...")
             found_result = False
-            for line in result.stdout.split('\n'):
+            for line in result.stdout.split("\n"):
                 print(f"   🔍 DEBUG: Output line: {repr(line)}")
-                if line.startswith('BENCHMARK_RESULT:'):
-                    eval_time = float(line.split(':')[1])
+                if line.startswith("BENCHMARK_RESULT:"):
+                    eval_time = float(line.split(":")[1])
                     print(f"      ✅ Evaluation: {eval_time:.1f}s per 100 examples")
                     found_result = True
                     return eval_time
-            
+
             if not found_result:
                 print("   ❌ DEBUG: No BENCHMARK_RESULT found in output!")
                 print("   📜 DEBUG: Full stdout:")
                 print(result.stdout)
                 return None
-                    
+
         except Exception as e:
             print(f"      ❌ Error in evaluation benchmark: {e}")
             import traceback
+
             traceback.print_exc()
             return None
-    
+
     def run_classifier_training_test(self) -> float:
         """Benchmark ACTUAL classifier training using real synthetic classifier creation."""
         print("   📊 Benchmarking classifier training...")
         print("   🔧 DEBUG: Creating classifier training test script...")
-        
+
         # Create test script that uses real synthetic classifier creation
-        test_script = '''
+        test_script = """
 import time
 import sys
 sys.path.append('.')
@@ -339,59 +353,69 @@ except Exception as e:
     import traceback
     traceback.print_exc()
     raise
-'''
-        
+"""
+
         print("   🔧 DEBUG: Writing classifier test script to temporary file...")
         try:
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(test_script)
                 temp_script = f.name
             print(f"   🔧 DEBUG: Classifier test script written to {temp_script}")
-            
-            print("   🔧 DEBUG: Running classifier training subprocess (20 min timeout)...")
-            result = subprocess.run([
-                sys.executable, temp_script
-            ], capture_output=True, text=True, timeout=1200)  # 20-minute timeout
-            
-            print(f"   🔧 DEBUG: Classifier subprocess completed with return code: {result.returncode}")
+
+            print(
+                "   🔧 DEBUG: Running classifier training subprocess (20 min timeout)..."
+            )
+            result = subprocess.run(
+                [sys.executable, temp_script],
+                capture_output=True,
+                text=True,
+                timeout=1200,
+            )  # 20-minute timeout
+
+            print(
+                f"   🔧 DEBUG: Classifier subprocess completed with return code: {result.returncode}"
+            )
             print(f"   🔧 DEBUG: Stdout length: {len(result.stdout)} chars")
             print(f"   🔧 DEBUG: Stderr length: {len(result.stderr)} chars")
-            
+
             if result.stderr:
                 print(f"   ⚠️ DEBUG: Classifier stderr content:\n{result.stderr}")
-            
+
             os.unlink(temp_script)
             print("   🔧 DEBUG: Classifier temporary script cleaned up")
-            
+
             # Parse result
             print("   🔧 DEBUG: Parsing classifier output for BENCHMARK_RESULT...")
             found_result = False
-            for line in result.stdout.split('\n'):
+            for line in result.stdout.split("\n"):
                 print(f"   🔍 DEBUG: Classifier output line: {repr(line)}")
-                if line.startswith('BENCHMARK_RESULT:'):
-                    training_time = float(line.split(':')[1])
-                    print(f"      ✅ Classifier training: {training_time:.1f}s per 100 classifiers")
+                if line.startswith("BENCHMARK_RESULT:"):
+                    training_time = float(line.split(":")[1])
+                    print(
+                        f"      ✅ Classifier training: {training_time:.1f}s per 100 classifiers"
+                    )
                     found_result = True
                     return training_time
-            
+
             if not found_result:
                 print("   ❌ DEBUG: No BENCHMARK_RESULT found in classifier output!")
                 print("   📜 DEBUG: Full classifier stdout:")
                 print(result.stdout)
                 return None
-                    
+
         except Exception as e:
             print(f"      ❌ Error in classifier training benchmark: {e}")
             import traceback
+
             traceback.print_exc()
             return None
-    
+
     def run_steering_test(self) -> float:
         """Benchmark steering performance using real CLI functionality."""
         print("   📊 Benchmarking steering performance...")
-        
+
         # Create steering test script using actual CLI
-        test_script = '''
+        test_script = """
 import time
 import sys
 sys.path.append('.')
@@ -423,36 +447,39 @@ try:
 except Exception as e:
     print(f"BENCHMARK_ERROR:{e}")
     raise
-'''
-        
+"""
+
         try:
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(test_script)
                 temp_script = f.name
-            
-            result = subprocess.run([
-                sys.executable, temp_script
-            ], capture_output=True, text=True, timeout=120)  # 2-minute timeout
-            
+
+            result = subprocess.run(
+                [sys.executable, temp_script],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )  # 2-minute timeout
+
             os.unlink(temp_script)
-            
+
             # Parse result
-            for line in result.stdout.split('\n'):
-                if line.startswith('BENCHMARK_RESULT:'):
-                    steering_time = float(line.split(':')[1])
+            for line in result.stdout.split("\n"):
+                if line.startswith("BENCHMARK_RESULT:"):
+                    steering_time = float(line.split(":")[1])
                     print(f"      Steering: {steering_time:.1f}s per example")
                     return steering_time
-                    
+
         except Exception as e:
             print(f"      Error in steering benchmark: {e}")
             raise RuntimeError(f"Steering benchmark failed: {e}")
-    
+
     def run_data_generation_test(self) -> float:
-        """Benchmark data generation performance using real synthetic generation.""" 
+        """Benchmark data generation performance using real synthetic generation."""
         print("   📊 Benchmarking data generation...")
-        
+
         # Create data generation test script using actual synthetic pair generation
-        test_script = '''
+        test_script = """
 import time
 import sys
 sys.path.append('.')
@@ -489,50 +516,55 @@ try:
 except Exception as e:
     print(f"BENCHMARK_ERROR:{e}")
     raise
-'''
-        
+"""
+
         try:
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(test_script)
                 temp_script = f.name
-            
-            result = subprocess.run([
-                sys.executable, temp_script
-            ], capture_output=True, text=True, timeout=300)  # 5-minute timeout
-            
+
+            result = subprocess.run(
+                [sys.executable, temp_script],
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )  # 5-minute timeout
+
             os.unlink(temp_script)
-            
+
             # Parse result
-            for line in result.stdout.split('\n'):
-                if line.startswith('BENCHMARK_RESULT:'):
-                    generation_time = float(line.split(':')[1])
+            for line in result.stdout.split("\n"):
+                if line.startswith("BENCHMARK_RESULT:"):
+                    generation_time = float(line.split(":")[1])
                     print(f"      Data generation: {generation_time:.1f}s per example")
                     return generation_time
-                    
+
         except Exception as e:
             print(f"      Error in data generation benchmark: {e}")
             raise RuntimeError(f"Data generation benchmark failed: {e}")
-    
+
     def run_full_benchmark(self, force_rerun: bool = False) -> DeviceBenchmark:
         """Run complete device benchmark suite."""
         # Check for cached results first
         if not force_rerun:
             cached = self.load_cached_benchmark()
             if cached:
-                print(f"   ✅ Using cached benchmark results (device: {cached.device_id[:8]}...)")
+                print(
+                    f"   ✅ Using cached benchmark results (device: {cached.device_id[:8]}...)"
+                )
                 self.cached_benchmark = cached
                 return cached
-        
+
         print("🚀 Running device performance benchmark...")
         print("   This will take 1-2 minutes to measure your hardware performance")
-        
+
         import platform
-        
+
         device_id = self.get_device_id()
         device_type = self.get_device_type()
-        
+
         print(f"   🖥️ Device ID: {device_id[:8]}... ({device_type})")
-        
+
         # Run all benchmarks with error handling
         try:
             model_loading = self.run_model_loading_benchmark()
@@ -542,7 +574,7 @@ except Exception as e:
         except Exception as e:
             print(f"   ❌ Model loading benchmark failed: {e}")
             raise
-            
+
         try:
             benchmark_eval = self.run_benchmark_eval_test()
             if benchmark_eval is None:
@@ -551,16 +583,18 @@ except Exception as e:
         except Exception as e:
             print(f"   ❌ Evaluation benchmark failed: {e}")
             benchmark_eval = 60.0  # Default fallback
-            
+
         try:
             classifier_training = self.run_classifier_training_test()
             if classifier_training is None:
-                print("   ⚠️ Classifier training benchmark returned None, using default value")
+                print(
+                    "   ⚠️ Classifier training benchmark returned None, using default value"
+                )
                 classifier_training = 600.0  # Default 600 seconds per 100 classifiers
         except Exception as e:
             print(f"   ❌ Classifier training benchmark failed: {e}")
             classifier_training = 600.0  # Default fallback
-            
+
         try:
             steering = self.run_steering_test()
             if steering is None:
@@ -569,7 +603,7 @@ except Exception as e:
         except Exception as e:
             print(f"   ❌ Steering benchmark failed: {e}")
             raise
-            
+
         try:
             data_generation = self.run_data_generation_test()
             if data_generation is None:
@@ -578,7 +612,7 @@ except Exception as e:
         except Exception as e:
             print(f"   ❌ Data generation benchmark failed: {e}")
             raise
-        
+
         # Create benchmark result
         benchmark = DeviceBenchmark(
             device_id=device_id,
@@ -590,51 +624,55 @@ except Exception as e:
             steering_seconds_per_example=steering,
             benchmark_timestamp=time.time(),
             python_version=sys.version,
-            platform_info=platform.platform()
+            platform_info=platform.platform(),
         )
-        
+
         # Save results
         self.save_benchmark(benchmark)
         self.cached_benchmark = benchmark
-        
+
         print("   ✅ Benchmark complete!")
         print(f"      Model loading: {model_loading:.1f}s")
         print(f"      Evaluation: {benchmark_eval:.1f}s per 100 examples")
-        print(f"      Classifier creation: {classifier_training:.1f}s per 100 classifiers")
+        print(
+            f"      Classifier creation: {classifier_training:.1f}s per 100 classifiers"
+        )
         print(f"      Steering: {steering:.1f}s per example")
         print(f"      Generation: {data_generation:.1f}s per example")
-        
+
         return benchmark
-    
+
     def get_current_benchmark(self, auto_run: bool = True) -> Optional[DeviceBenchmark]:
         """Get current device benchmark, optionally auto-running if needed."""
         if self.cached_benchmark:
             return self.cached_benchmark
-            
+
         cached = self.load_cached_benchmark()
         if cached:
             self.cached_benchmark = cached
             return cached
-            
+
         if auto_run:
             return self.run_full_benchmark()
-            
+
         return None
-    
+
     def estimate_task_time(self, task_type: str, quantity: int = 1) -> float:
         """
         Estimate time for a specific task type and quantity.
-        
+
         Args:
             task_type: Type of task ("model_loading", "benchmark_eval", etc.)
             quantity: Number of items (examples, samples, etc.)
-            
+
         Returns:
             Estimated time in seconds
         """
         benchmark = self.get_current_benchmark()
         if not benchmark:
-            raise RuntimeError("No benchmark available for device. Run benchmark first with: python -m wisent_guard.core.agent.budget benchmark")
+            raise RuntimeError(
+                "No benchmark available for device. Run benchmark first with: python -m wisent_guard.core.agent.budget benchmark"
+            )
         else:
             # Use actual benchmark results
             if task_type == "model_loading":
@@ -643,7 +681,9 @@ except Exception as e:
                 base_time = benchmark.benchmark_eval_seconds_per_100_examples
                 return (base_time / 100.0) * quantity
             elif task_type == "classifier_training":
-                base_time = benchmark.classifier_training_seconds_per_100_samples  # Actually per 100 classifiers now
+                base_time = (
+                    benchmark.classifier_training_seconds_per_100_samples
+                )  # Actually per 100 classifiers now
                 return (base_time / 100.0) * quantity
             elif task_type == "steering":
                 return benchmark.steering_seconds_per_example * quantity
@@ -670,11 +710,11 @@ def ensure_benchmark_exists(force_rerun: bool = False) -> DeviceBenchmark:
 def estimate_task_time(task_type: str, quantity: int = 1) -> float:
     """
     Convenience function to estimate task time.
-    
+
     Args:
         task_type: Type of task ("model_loading", "benchmark_eval", etc.)
         quantity: Number of items
-        
+
     Returns:
         Estimated time in seconds
     """
@@ -686,5 +726,5 @@ def get_current_device_info() -> Dict[str, str]:
     benchmarker = get_device_benchmarker()
     return {
         "device_id": benchmarker.get_device_id(),
-        "device_type": benchmarker.get_device_type()
-    } 
+        "device_type": benchmarker.get_device_type(),
+    }
