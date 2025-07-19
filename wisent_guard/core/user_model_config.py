@@ -4,7 +4,6 @@ Handles models that aren't explicitly supported by storing user-provided configu
 """
 
 import json
-import os
 from pathlib import Path
 from typing import Dict, Optional, Any
 from enum import Enum

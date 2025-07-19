@@ -2,7 +2,7 @@ from enum import Enum
 from .classifier import Classifier
 from .contrastive_pairs import ContrastivePairSet
 from .activations import Activations
-from .steering_method import SteeringMethod as BaseSteeringMethod, CAA
+from .steering_method import CAA
 import torch
 import torch.nn.functional as F
 import json

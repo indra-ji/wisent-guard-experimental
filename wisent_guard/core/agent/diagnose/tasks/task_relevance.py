@@ -7,7 +7,7 @@ lm-evaluation-harness library based on a user query or issue type.
 Uses model-driven decisions instead of hardcoded patterns.
 """
 
-from typing import List, Dict, Set, Tuple
+from typing import List, Tuple
 from .task_manager import get_available_tasks
 
 

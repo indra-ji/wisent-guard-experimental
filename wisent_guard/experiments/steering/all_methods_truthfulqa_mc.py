@@ -8,9 +8,8 @@ import subprocess
 import json
 import os
 import argparse
-import time
 from datetime import datetime
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -408,7 +407,7 @@ class SteeringMethodComparison:
                 ax3.plot(method_data['strength'], method_data['truthful_rate'], 
                         marker='o', label=method, linewidth=2)
             
-            ax3.axhline(y=baseline_rate, color='red', linestyle='--', alpha=0.7, label=f'Baseline')
+            ax3.axhline(y=baseline_rate, color='red', linestyle='--', alpha=0.7, label='Baseline')
             ax3.set_xlabel('Steering Strength')
             ax3.set_ylabel('Truthful Rate')
             ax3.set_title('Truthful Rate vs Steering Strength')

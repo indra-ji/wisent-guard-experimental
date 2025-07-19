@@ -3,7 +3,7 @@ Tests for LiveCodeBench data integration.
 """
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 from datetime import datetime
 
 from wisent_guard.core.data_loaders import LiveCodeBenchLoader, SteeringDataExtractor

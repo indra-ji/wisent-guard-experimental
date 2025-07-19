@@ -4,7 +4,6 @@ from ..activations import Activations, ActivationAggregationMethod
 import torch
 import random
 import json
-import csv
 import pandas as pd
 from pathlib import Path
 from typing import List, Optional, Tuple, Dict, Any, Union
@@ -1151,7 +1150,7 @@ class ContrastivePairSet:
                             question = task_data.doc_to_text(doc)
                         else:
                             question = doc.get('question', str(doc))
-                    except Exception as e:
+                    except Exception:
                         question = str(doc)
                         
                 
@@ -1407,7 +1406,7 @@ class ContrastivePairSet:
                     print(f"   Task: {task_name}")
                     print(f"   Error: {e}")
                     print(f"   Document keys: {list(doc.keys()) if isinstance(doc, dict) else 'Not a dict'}")
-                    print(f"   Continuing with next document...\n")
+                    print("   Continuing with next document...\n")
                 continue
         
         return qa_pairs 

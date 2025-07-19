@@ -6,8 +6,7 @@ import pytest
 import torch
 import tempfile
 import os
-import shutil
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch, MagicMock
 from transformers import GPT2Config
 
 from wisent_guard.core.models import SteeringCompatibleModel, create_steering_compatible_model

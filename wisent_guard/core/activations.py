@@ -2,12 +2,11 @@ import torch
 import torch.nn.functional as F
 from .layer import Layer
 from enum import Enum
-from typing import Optional, Dict, Any, Union, List, Tuple
+from typing import Optional, Dict, Any, List
 try:
     from .contrastive_pairs import ContrastivePair
 except ImportError:
-    from contrastive_pairs import ContrastivePair
-from .response import PositiveResponse, NegativeResponse
+    pass
 
 class ActivationAggregationMethod(Enum):
     LAST_TOKEN = "last_token"
@@ -117,7 +116,7 @@ class Activations:
             else:
                 raise ValueError(f"Unknown similarity method: {method}")
                 
-        except Exception as e:
+        except Exception:
             # Return 0 similarity on error
             return 0.0
 
@@ -448,7 +447,6 @@ class TestActivationCache:
     def save_to_file(self, filepath: str) -> None:
         """Save cached activations to file."""
         import torch
-        import json
         
         if not self.activations:
             raise ValueError("No activations to save")

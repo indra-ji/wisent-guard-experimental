@@ -7,7 +7,7 @@ The actual response is NEVER analyzed as text - only its activations are classif
 """
 
 import time
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Tuple
 from dataclasses import dataclass
 
 from ....core.contrastive_pairs.generate_synthetically import SyntheticContrastivePairGenerator
@@ -168,7 +168,7 @@ class SyntheticClassifierFactory:
                     print(f"         📜 Full error traceback:\n{error_details}")
                     continue
             
-            print(f"      📊 ACTIVATION EXTRACTION SUMMARY:")
+            print("      📊 ACTIVATION EXTRACTION SUMMARY:")
             print(f"         Positive activations collected: {len(positive_activations)}")
             print(f"         Negative activations collected: {len(negative_activations)}")
             print(f"         Total pairs processed: {len(pair_set.pairs)}")
@@ -182,11 +182,11 @@ class SyntheticClassifierFactory:
             # Train classifier on activations
             print(f"      🏋️ Training classifier on {len(positive_activations)} positive, {len(negative_activations)} negative activations...")
             
-            print(f"      🔧 Creating ActivationClassifier instance...")
+            print("      🔧 Creating ActivationClassifier instance...")
             classifier = ActivationClassifier()
-            print(f"      ✅ ActivationClassifier created")
+            print("      ✅ ActivationClassifier created")
             
-            print(f"      🎯 Starting classifier training...")
+            print("      🎯 Starting classifier training...")
             try:
                 # Convert activations to the format expected by train_on_activations method
                 from wisent_guard.core.activations import Activations
@@ -276,14 +276,14 @@ class SyntheticClassifierSystem:
             data_generation_cost = estimate_task_time_direct("data_generation", 1)  # Per pair
             classifier_training_cost = estimate_task_time_direct("classifier_training", 100) / 100  # Per classifier (benchmark is per 100) 
             
-            print(f"   💰 Cost estimates per unit:")
+            print("   💰 Cost estimates per unit:")
             print(f"      • Trait discovery: ~{trait_discovery_cost:.0f}s")
             print(f"      • Data generation: ~{data_generation_cost:.0f}s per pair")
             print(f"      • Classifier training: ~{classifier_training_cost:.0f}s per classifier")
             
         except Exception as e:
             print(f"   ⚠️ Could not get benchmark data: {e}")
-            print(f"   ⚠️ Using fallback estimates")
+            print("   ⚠️ Using fallback estimates")
             # Fallback estimates if benchmarks aren't available
             trait_discovery_cost = 10.0
             data_generation_cost = 30.0  # Per pair
@@ -300,12 +300,12 @@ class SyntheticClassifierSystem:
         if budget_seconds < min_required_time:
             print(f"   💰 Budget ({budget_seconds:.0f}s) too small for full classifier training")
             print(f"   💰 Minimum required: {min_required_time:.0f}s")
-            print(f"   🔄 Falling back to simple trait analysis only...")
+            print("   🔄 Falling back to simple trait analysis only...")
             
             # Just do trait discovery without training classifiers
             discovery_result = self.trait_discovery.discover_relevant_traits(prompt, time_budget_minutes)
             print(f"   ✅ Discovered {len(discovery_result.traits_discovered)} traits: {discovery_result.traits_discovered}")
-            print(f"   ⚠️ Skipping classifier training due to budget constraints")
+            print("   ⚠️ Skipping classifier training due to budget constraints")
             return [], discovery_result
         
         # Calculate how many traits we can afford
@@ -313,7 +313,7 @@ class SyntheticClassifierSystem:
         available_for_traits = budget_seconds - trait_discovery_cost
         max_affordable_traits = max(1, int(available_for_traits / cost_per_trait))
         
-        print(f"   💰 Budget analysis:")
+        print("   💰 Budget analysis:")
         print(f"      • Available time: {budget_seconds:.0f}s")
         print(f"      • Cost per trait ({pairs_per_trait} pairs): {cost_per_trait:.0f}s")
         print(f"      • Max affordable traits: {max_affordable_traits}")
@@ -623,7 +623,7 @@ def create_classifier_from_trait_description(
             log_and_print(f"   📜 Full error traceback:\n{error_details}")
             continue
     
-    log_and_print(f"\n📊 ACTIVATION EXTRACTION SUMMARY:")
+    log_and_print("\n📊 ACTIVATION EXTRACTION SUMMARY:")
     log_and_print(f"   Positive activations collected: {len(positive_activations)}")
     log_and_print(f"   Negative activations collected: {len(negative_activations)}")
     log_and_print(f"   Total pairs processed: {len(pair_set.pairs)}")
@@ -683,7 +683,7 @@ def create_classifier_from_trait_description(
     classifier._pairs_count = len(pair_set.pairs)
     log_and_print(f"📝 Stored metadata: trait='{trait_description}', pairs_count={len(pair_set.pairs)}")
     
-    log_and_print(f"🎉 Classifier creation completed successfully!")
+    log_and_print("🎉 Classifier creation completed successfully!")
     log_and_print(f"📁 Debug log saved to: {log_file}")
     
     return classifier

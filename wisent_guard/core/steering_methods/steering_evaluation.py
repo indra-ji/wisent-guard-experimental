@@ -4,7 +4,6 @@ Provides functions to evaluate steering methods using the lm-harness framework.
 """
 
 import torch
-from typing import Dict, List, Any, Optional
 
 
 def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods, layers, steering_strength=1.0, use_test_split=True, verbose=False, output_mode="both"):
@@ -19,7 +18,6 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                     - "both": show both comparisons (default)
     """
     
-    import torch
     from lm_eval import evaluate
     from lm_eval.api.model import LM
     
@@ -139,7 +137,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         # The continuation tokens are the difference
                         continuation_tokens = full_tokens[len(context_tokens):]
                         
-                        print(f"      🔍 TOKENIZATION DEBUG:")
+                        print("      🔍 TOKENIZATION DEBUG:")
                         print(f"         Context: '{context[:50]}...' -> {len(context_tokens)} tokens")
                         print(f"         Continuation: '{continuation[:50]}...' -> expected {len(continuation_tokens)} tokens")
                         print(f"         Full text: '{full_text[:50]}...' -> {len(full_tokens)} tokens")
@@ -156,7 +154,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         
                         # Apply steering if needed
                         if self.steering_methods and self.layers:
-                            print(f"   🎯 APPLYING STEERING")
+                            print("   🎯 APPLYING STEERING")
                             print(f"      Methods: {len(self.steering_methods)}, layers: {self.layers}, strength: {self.steering_strength}")
                             for i, method in enumerate(self.steering_methods):
                                 print(f"      Method {i}: {type(method).__name__}, trained: {getattr(method, 'is_trained', 'unknown')}")
@@ -190,7 +188,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                                                 # Handle KSteering differently from vector-based methods
                                                 if steering_method.__class__.__name__ == 'KSteering':
                                                     if verbose:
-                                                        print(f"   🔍 KSteering detected, applying gradient-based steering")
+                                                        print("   🔍 KSteering detected, applying gradient-based steering")
                                                     
                                                     # KSteering uses apply_steering method directly
                                                     steered_hidden_states = steering_method.apply_steering(hidden_states, strength=self.steering_strength)
@@ -223,7 +221,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                                                         
                                                         # Check for extreme values
                                                         if torch.any(torch.isnan(steered_hidden_states)) or torch.any(torch.isinf(steered_hidden_states)):
-                                                            print(f"         ⚠️ WARNING: Steered hidden states contain NaN or Inf values!")
+                                                            print("         ⚠️ WARNING: Steered hidden states contain NaN or Inf values!")
                                                             print(f"         Max value: {steered_hidden_states.max().item()}")
                                                             print(f"         Min value: {steered_hidden_states.min().item()}")
                                                         
@@ -241,7 +239,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                                                         print(f"   ⚠️ No steering vector found on method {steering_method.__class__.__name__}")
                                             else:
                                                 if verbose:
-                                                    print(f"   ⚠️ Invalid hidden states shape for steering")
+                                                    print("   ⚠️ Invalid hidden states shape for steering")
                                             
                                             # Return original output if no steering applied
                                             return output
@@ -275,7 +273,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                                     logits = outputs.logits
                                     
                                 # Check logits immediately after forward pass
-                                print(f"      🔍 LOGITS CHECK (after steering):")
+                                print("      🔍 LOGITS CHECK (after steering):")
                                 print(f"         Shape: {logits.shape}")
                                 print(f"         Contains inf: {torch.any(torch.isinf(logits)).item()}")
                                 print(f"         Contains nan: {torch.any(torch.isnan(logits)).item()}")
@@ -292,14 +290,14 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                                 print(f"      Removing {len(hooks)} hooks")
                                 for hook in hooks:
                                     hook.remove()
-                                print(f"      Hooks removed")
+                                print("      Hooks removed")
                         else:
                             # Forward pass without steering
                             with torch.no_grad():
                                 outputs = self.wisent_model.model(input_ids)
                                 logits = outputs.logits
                                 
-                            print(f"      🔍 LOGITS CHECK (no steering):")
+                            print("      🔍 LOGITS CHECK (no steering):")
                             print(f"         Shape: {logits.shape}")
                             print(f"         Contains inf: {torch.any(torch.isinf(logits)).item()}")
                             print(f"         Contains nan: {torch.any(torch.isnan(logits)).item()}")
@@ -312,7 +310,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         continuation_start = len(context_tokens)
                         continuation_end = len(full_tokens)
                         
-                        print(f"\n   🔍 LOGLIKELIHOOD DEBUG:")
+                        print("\n   🔍 LOGLIKELIHOOD DEBUG:")
                         print(f"      Context length: {len(context_tokens)}")
                         print(f"      Full length: {len(full_tokens)}")
                         print(f"      Continuation length: {len(continuation_tokens)}")
@@ -320,7 +318,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         
                         if continuation_start >= logits.shape[1]:
                             print(f"      ❌ Continuation start {continuation_start} >= logits seq length {logits.shape[1]}")
-                            print(f"      Returning -inf")
+                            print("      Returning -inf")
                             results.append((float('-inf'), False))
                             continue
                         
@@ -340,7 +338,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         
                         # Check if logits contain extreme values
                         if torch.any(torch.isinf(target_logits)) or torch.any(torch.isnan(target_logits)):
-                            print(f"      ⚠️ CRITICAL: Target logits already contain inf/nan!")
+                            print("      ⚠️ CRITICAL: Target logits already contain inf/nan!")
                             print(f"      Inf count in logits: {torch.isinf(target_logits).sum().item()}")
                             print(f"      NaN count in logits: {torch.isnan(target_logits).sum().item()}")
                             
@@ -351,12 +349,12 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                             print(f"      NaN positions: {nan_positions}")
                         
                         # Compute log probabilities
-                        print(f"      Computing log_softmax...")
+                        print("      Computing log_softmax...")
                         log_probs = torch.log_softmax(target_logits, dim=-1)
                         
                         # Check for inf/nan in log_probs
                         if torch.any(torch.isinf(log_probs)) or torch.any(torch.isnan(log_probs)):
-                            print(f"      ⚠️ Log probs contain inf/nan!")
+                            print("      ⚠️ Log probs contain inf/nan!")
                             print(f"      Inf count: {torch.isinf(log_probs).sum().item()}")
                             print(f"      NaN count: {torch.isnan(log_probs).sum().item()}")
                         
@@ -377,7 +375,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         
                         results.append((total_log_likelihood, False))
                         
-                    except Exception as e:
+                    except Exception:
                         # Return very low likelihood for failed computations
                         results.append((float('-inf'), False))
                         
@@ -391,7 +389,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
         
         # STEP 1: Run evaluation WITHOUT steering for baseline
         if verbose:
-            print(f"🔍 STEP 1: Getting unsteered baseline log-likelihoods...")
+            print("🔍 STEP 1: Getting unsteered baseline log-likelihoods...")
             print(f"   Number of test pairs: {len(test_qa_pairs)}")
             print(f"   Task: {task_data.config.task}")
         
@@ -419,7 +417,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
         
         # STEP 2: Run evaluation WITH steering  
         if verbose:
-            print(f"🔍 STEP 2: Getting steered log-likelihoods...")
+            print("🔍 STEP 2: Getting steered log-likelihoods...")
             print(f"   Steering methods: {[m.__class__.__name__ for m in steering_methods] if steering_methods else 'None'}")
             print(f"   Steering layers: {layers}")
             print(f"   Steering strength: {steering_strength}")
@@ -447,7 +445,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
         
         # STEP 3: Compare log-likelihoods
         if verbose and baseline_likelihoods and steered_likelihoods and output_mode in ["likelihoods", "both"]:
-            print(f"\n📊 LOG-LIKELIHOOD COMPARISON:")
+            print("\n📊 LOG-LIKELIHOOD COMPARISON:")
             print(f"   Steering Strength: {steering_strength}")
             print(f"   Method: {steering_methods[0].__class__.__name__ if steering_methods else 'None'}")
             print(f"   Layer: {layers}")
@@ -459,7 +457,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                 choices = doc.get('mc1_targets', {}).get('choices', [])
                 labels = doc.get('mc1_targets', {}).get('labels', [])
                 
-                print(f"\n   📈 Log-Likelihood Changes:")
+                print("\n   📈 Log-Likelihood Changes:")
                 for i, (baseline, steered) in enumerate(zip(baseline_likelihoods, steered_likelihoods)):
                     change = steered - baseline
                     is_correct = labels[i] == 1 if i < len(labels) else False
@@ -476,7 +474,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                 unsteered_best = baseline_likelihoods.index(max(baseline_likelihoods))
                 steered_best = steered_likelihoods.index(max(steered_likelihoods))
                 
-                print(f"   🎯 Model Preferences:")
+                print("   🎯 Model Preferences:")
                 print(f"      Unsteered model prefers: {chr(65+unsteered_best)} (likelihood: {max(baseline_likelihoods):.2f})")
                 print(f"      Steered model prefers:   {chr(65+steered_best)} (likelihood: {max(steered_likelihoods):.2f})")
                 
@@ -487,7 +485,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
         
         # STEP 4: Generate full responses for comparison
         if verbose and baseline_samples and output_mode in ["responses", "both"]:
-            print(f"\n🤖 RESPONSE GENERATION COMPARISON:")
+            print("\n🤖 RESPONSE GENERATION COMPARISON:")
             
             doc = baseline_samples[0]['doc']
             question = doc['question']
@@ -500,7 +498,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
             
             try:
                 # Generate unsteered response
-                print(f"\n   🔍 Generating unsteered response...")
+                print("\n   🔍 Generating unsteered response...")
                 inputs = model.tokenizer(generation_prompt, return_tensors="pt").to(model.device)
                 
                 with torch.no_grad():
@@ -605,17 +603,17 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
                         hook.remove()
                 
                 # Compare responses
-                print(f"\n   📝 Response Comparison:")
-                print(f"   🔹 Unsteered Response:")
+                print("\n   📝 Response Comparison:")
+                print("   🔹 Unsteered Response:")
                 print(f"      {unsteered_response}")
                 print(f"\n   🎯 Steered Response (strength {steering_strength}):")
                 print(f"      {steered_response}")
                 
                 # Analyze differences
                 if unsteered_response.lower().strip() == steered_response.lower().strip():
-                    print(f"\n   ⚖️ Analysis: Responses are identical - steering had no effect on generation")
+                    print("\n   ⚖️ Analysis: Responses are identical - steering had no effect on generation")
                 else:
-                    print(f"\n   🔄 Analysis: Steering changed the response")
+                    print("\n   🔄 Analysis: Steering changed the response")
                     
                     # Check if either mentions the correct answer (Nauru)
                     correct_answer = "Nauru"
@@ -673,7 +671,7 @@ def run_lm_harness_evaluation(task_data, test_qa_pairs, model, steering_methods,
         }
         
         if verbose:
-            print(f"\n   ✅ Evaluation completed")
+            print("\n   ✅ Evaluation completed")
             print(f"   📊 Accuracy: {accuracy}")
             print(f"   🎯 Steering applied: {'Yes' if steering_methods else 'No'}")
             

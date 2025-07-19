@@ -8,12 +8,9 @@ This module handles:
 - Integration with the autonomous agent system
 """
 
-import os
 import time
-import tempfile
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
-from datetime import datetime
 
 from ...model import Model
 from ...classifier import Classifier, ActivationClassifier
@@ -500,13 +497,13 @@ class ClassifierCreator:
             print(f"   🎯 Found {len(relevant_benchmarks)} relevant benchmarks: {relevant_benchmarks[:3]}...")
             return self._load_benchmark_data(relevant_benchmarks, num_samples)
         else:
-            print(f"   🤖 No specific benchmarks found, using synthetic generation...")
+            print("   🤖 No specific benchmarks found, using synthetic generation...")
             return self._generate_synthetic_training_data(issue_type, num_samples)
     
     def _find_relevant_benchmarks(self, issue_type: str, time_budget_minutes: float = 5.0) -> List[str]:
         """Find relevant benchmarks for the given issue type based on time budget with priority-aware selection."""
         from .tasks.task_relevance import find_relevant_tasks
-        from ..budget import calculate_max_tasks_for_time_budget, optimize_tasks_for_budget
+        from ..budget import calculate_max_tasks_for_time_budget
         
         try:
             # Calculate max tasks using budget system
@@ -551,7 +548,7 @@ class ClassifierCreator:
                 
             except Exception as priority_error:
                 print(f"   ⚠️ Priority-aware selection failed: {priority_error}")
-                print(f"   🔄 Falling back to legacy task relevance...")
+                print("   🔄 Falling back to legacy task relevance...")
                 
                 # Fallback to legacy system
                 relevant_task_results = find_relevant_tasks(
@@ -585,7 +582,7 @@ class ClassifierCreator:
             
         except Exception as e:
             print(f"   ⚠️ Error finding relevant benchmarks: {e}")
-            print(f"   ⚠️ Using fallback tasks")
+            print("   ⚠️ Using fallback tasks")
             # Minimal fallback to high priority fast benchmarks
             return ["mmlu", "truthfulqa_mc1", "hellaswag"]
     
@@ -893,7 +890,7 @@ class ClassifierCreator:
                 continue
         
         if not training_data:
-            print(f"   ❌ Failed to load from any benchmarks, falling back to synthetic...")
+            print("   ❌ Failed to load from any benchmarks, falling back to synthetic...")
             return self._generate_synthetic_training_data("unknown", num_samples)
         
         print(f"   ✅ Loaded {len(training_data)} examples from {len([b for b in benchmarks if any(b in item.get('source', '') for item in training_data)])} benchmarks")

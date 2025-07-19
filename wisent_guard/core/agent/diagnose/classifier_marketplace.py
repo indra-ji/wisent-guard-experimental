@@ -5,7 +5,6 @@ import json
 import pickle
 import time
 from datetime import datetime
-import numpy as np
 
 @dataclass
 class ClassifierListing:
@@ -441,7 +440,7 @@ Respond with just the layer number (8-20):"""
         if not self.available_classifiers:
             return "🏪 Classifier Marketplace: No classifiers available"
         
-        summary = f"\n🏪 Classifier Marketplace Summary\n"
+        summary = "\n🏪 Classifier Marketplace Summary\n"
         summary += f"{'='*50}\n"
         summary += f"Available Classifiers: {len(self.available_classifiers)}\n\n"
         

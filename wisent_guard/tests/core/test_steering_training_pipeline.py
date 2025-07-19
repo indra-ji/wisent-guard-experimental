@@ -4,15 +4,13 @@ Tests for steering vector training pipeline.
 
 import pytest
 import torch
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime
+from unittest.mock import patch, MagicMock
 
 from wisent_guard.core.pipelines import ActivationCollector, SteeringVectorTrainer, ExperimentRunner
 from wisent_guard.core.pipelines.activation_collector import ActivationData
 from wisent_guard.core.pipelines.steering_trainer import TrainingConfig, TrainingResults
 from wisent_guard.core.pipelines.experiment_runner import ExperimentConfig, ExperimentResults
 from wisent_guard.core.data_loaders.steering_data_extractor import ContrastivePair
-from wisent_guard.core.data_loaders.livecodebench_loader import LiveCodeBenchProblem
 
 
 class TestActivationCollector:

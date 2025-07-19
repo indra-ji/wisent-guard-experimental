@@ -562,7 +562,7 @@ class SteeringOptimizer:
         """Ask user to confirm if they want to proceed with estimated runtime."""
         hours = estimated_seconds / 3600
         
-        print(f"\n⏱️  RUNTIME ESTIMATION:")
+        print("\n⏱️  RUNTIME ESTIMATION:")
         print(f"   • Task: {self.task_name}")
         print(f"   • Examples: {self.limit}")
         print(f"   • Configurations to test: {budget}")
@@ -575,10 +575,10 @@ class SteeringOptimizer:
             print(f"   • Estimated time: {hours:.1f} hours ({hours/24:.1f} days)")
         
         if hours > 12:
-            print(f"   ⚠️  WARNING: This will take a very long time!")
+            print("   ⚠️  WARNING: This will take a very long time!")
         
         while True:
-            response = input(f"\nProceed with optimization? (y/n): ").strip().lower()
+            response = input("\nProceed with optimization? (y/n): ").strip().lower()
             if response in ['y', 'yes']:
                 return True
             elif response in ['n', 'no']:
@@ -835,7 +835,7 @@ def main():
     # Print results
     best_result = optimizer.get_best_config()
     if best_result:
-        print(f"\n🏆 BEST CONFIGURATION:")
+        print("\n🏆 BEST CONFIGURATION:")
         print(f"   Layer: {best_result.config.layer}")
         print(f"   Method: {best_result.config.method}")
         print(f"   Strength: {best_result.config.strength}")
@@ -848,7 +848,7 @@ def main():
         print(f"   Runtime: {best_result.runtime_seconds:.1f}s")
         
         # Show top 5 configurations
-        print(f"\n📊 TOP 5 CONFIGURATIONS:")
+        print("\n📊 TOP 5 CONFIGURATIONS:")
         for i, result in enumerate(optimizer.get_top_configs(5)):
             if result.error is None:
                 print(f"   {i+1}. Layer {result.config.layer}, {result.config.method}, "
@@ -857,7 +857,7 @@ def main():
     # Print analysis
     analysis = optimizer.analyze_results()
     if 'method_performance' in analysis:
-        print(f"\n🔬 METHOD ANALYSIS:")
+        print("\n🔬 METHOD ANALYSIS:")
         for method, perf in analysis['method_performance'].items():
             print(f"   {method}: Best {perf['best_accuracy']:.3f}, "
                   f"Mean {perf['mean_accuracy']:.3f} ± {perf['std_accuracy']:.3f}")
@@ -866,7 +866,7 @@ def main():
     output_dir = getattr(args, 'output_dir', None) or "optimization_results"
     full_results_path, best_config_path = optimizer.save_results(output_dir)
     
-    print(f"\n💾 Results saved:")
+    print("\n💾 Results saved:")
     print(f"   Full results: {full_results_path}")
     if best_config_path:
         print(f"   Best config: {best_config_path}")
@@ -874,7 +874,7 @@ def main():
         # Show the CLI command to reproduce best result
         best_result = optimizer.get_best_config()
         if best_result:
-            print(f"\n🔄 To reproduce best result:")
+            print("\n🔄 To reproduce best result:")
             print(f"   {optimizer._generate_cli_command(best_result.config)}")
 
 if __name__ == '__main__':

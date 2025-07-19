@@ -135,11 +135,11 @@ def train_classifier_detector(model, tokenizer, training_pairs, config):
                         "token_text": config['positive_class_label'],
                         "is_harmful": True  # Keep this as True for compatibility with API
                     })
-                    print(f"    ✓ Successfully collected harmful activation")
+                    print("    ✓ Successfully collected harmful activation")
                 else:
                     print(f"    ✗ Layer {layer} not found in activations")
             else:
-                print(f"    ✗ Failed to prepare activations for harmful example")
+                print("    ✗ Failed to prepare activations for harmful example")
         except Exception as e:
             print(f"    ✗ Error processing harmful example: {e}")
         
@@ -160,11 +160,11 @@ def train_classifier_detector(model, tokenizer, training_pairs, config):
                         "token_text": "normal",
                         "is_harmful": False  # Keep this as False for compatibility with API
                     })
-                    print(f"    ✓ Successfully collected harmless activation")
+                    print("    ✓ Successfully collected harmless activation")
                 else:
                     print(f"    ✗ Layer {layer} not found in activations")
             else:
-                print(f"    ✗ Failed to prepare activations for harmless example")
+                print("    ✗ Failed to prepare activations for harmless example")
         except Exception as e:
             print(f"    ✗ Error processing harmless example: {e}")
     
@@ -383,7 +383,7 @@ def evaluate_responses(model, tokenizer, guard, prompts, show_input=True):
             print(f"⚠️ Content flagged as potentially {guard.classifier.positive_class_label}")
             print(f"Reason: {reason}")
         else:
-            print(f"✅ Content classified as safe")
+            print("✅ Content classified as safe")
             
         if classification_score is not None:
             print(f"Classification score: {classification_score:.4f} (threshold: {classification_threshold:.4f})")

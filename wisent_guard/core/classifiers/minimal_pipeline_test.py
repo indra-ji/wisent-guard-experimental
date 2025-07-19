@@ -4,14 +4,11 @@ Minimal pipeline test: 4 training + 1 testing contrastive pairs per benchmark.
 Fails hard on any error. Tests one layer only.
 """
 
-import os
 import sys
 import json
-import pickle
 import torch
 import argparse
-import time
-from typing import Dict, List, Any
+from typing import Dict, List
 from pathlib import Path
 from datetime import datetime
 import numpy as np
@@ -45,7 +42,7 @@ class MinimalPipelineTester:
             'benchmarks': {}
         }
         
-        print(f"🧪 Minimal Pipeline Tester")
+        print("🧪 Minimal Pipeline Tester")
         print(f"   Model: {model_name}")
         print(f"   Layer: {layer}")
         print(f"   Output: {self.output_dir}")
@@ -54,7 +51,7 @@ class MinimalPipelineTester:
         """Download benchmarks if needed."""
         benchmarks_dir = self.script_dir / "full_benchmarks" / "data"
         if not benchmarks_dir.exists() or not list(benchmarks_dir.glob("*.pkl")):
-            print(f"📥 Downloading benchmarks...")
+            print("📥 Downloading benchmarks...")
             downloader = FullBenchmarkDownloader(str(benchmarks_dir.parent))
             downloader.download_all_benchmarks()
     
@@ -112,7 +109,7 @@ class MinimalPipelineTester:
         }
         
         # Step 1: Generate 5 contrastive pairs (4 train + 1 test)
-        print(f"   🔄 Generating 5 contrastive pairs...")
+        print("   🔄 Generating 5 contrastive pairs...")
         response_generator = TestingResponseGenerator(self.model_name, str(self.output_dir))
         
         # Generate test responses with limit of 5
@@ -175,7 +172,7 @@ class MinimalPipelineTester:
         benchmark_result['token_position'] = "last_token"  # Default assumption
         
         # Step 3: Train classifier
-        print(f"   🏗️ Training classifier...")
+        print("   🏗️ Training classifier...")
         
         # Convert to numpy
         X_train = train_activations.detach().cpu().numpy()
@@ -187,7 +184,7 @@ class MinimalPipelineTester:
         benchmark_result['classifier_trained'] = True
         
         # Step 4: Test classifier
-        print(f"   🧪 Testing classifier...")
+        print("   🧪 Testing classifier...")
         
         # Convert to numpy
         X_test = test_activations.detach().cpu().numpy()
@@ -207,7 +204,7 @@ class MinimalPipelineTester:
     
     def run_all_benchmarks(self):
         """Run pipeline test on all benchmarks."""
-        print(f"🚀 Starting minimal pipeline test...")
+        print("🚀 Starting minimal pipeline test...")
         
         # Ensure benchmarks are downloaded
         self.ensure_benchmarks_downloaded()
@@ -244,7 +241,7 @@ class MinimalPipelineTester:
         failed = total - completed
         
         print(f"\n{'='*50}")
-        print(f"📊 PIPELINE TEST SUMMARY")
+        print("📊 PIPELINE TEST SUMMARY")
         print(f"{'='*50}")
         print(f"Total benchmarks: {total}")
         print(f"Completed: {completed}")

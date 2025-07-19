@@ -7,7 +7,6 @@ benchmark's evaluation method and saves activations from all layers using
 existing Model class functionality.
 """
 
-import os
 import sys
 import json
 import pickle
@@ -55,14 +54,14 @@ class TestingResponseGenerator:
         
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        print(f"🧪 Testing Response Generator")
+        print("🧪 Testing Response Generator")
         print(f"   Model: {model_name}")
         print(f"   Benchmarks source: {self.benchmarks_dir}")
         print(f"   Output directory: {self.output_dir}")
         print(f"   Evaluation methods: {len(self.evaluation_methods)} benchmarks")
         
         # Initialize model
-        print(f"\n🔄 Loading model...")
+        print("\n🔄 Loading model...")
         self.model = Model(model_name)
         self.num_layers = self.model.get_num_layers()
         print(f"   ✅ Model loaded with {self.num_layers} layers")
@@ -70,7 +69,7 @@ class TestingResponseGenerator:
         # Check benchmarks directory exists (warn but don't fail - auto-download will handle this)
         if not self.benchmarks_dir.exists():
             print(f"⚠️  Benchmarks directory not found: {self.benchmarks_dir}")
-            print(f"   📥 Benchmark data will be downloaded automatically if needed")
+            print("   📥 Benchmark data will be downloaded automatically if needed")
     
     def get_available_benchmarks(self) -> List[str]:
         """Get list of available downloaded benchmarks."""
@@ -123,7 +122,7 @@ class TestingResponseGenerator:
         activations = {}
         
         if not text or not text.strip():
-            print(f"      ⚠️ Empty text provided for activation extraction")
+            print("      ⚠️ Empty text provided for activation extraction")
             return {layer: None for layer in range(self.num_layers)}
         
         for layer_idx in range(self.num_layers):
@@ -579,17 +578,17 @@ class TestingResponseGenerator:
         available_benchmarks = self.get_available_benchmarks()
         
         if not available_benchmarks:
-            print(f"❌ No benchmarks found with evaluation methods")
+            print("❌ No benchmarks found with evaluation methods")
             return {}
         
         benchmarks = benchmarks or available_benchmarks
         benchmarks = [b for b in benchmarks if b in available_benchmarks]
         
         if not benchmarks:
-            print(f"❌ None of the specified benchmarks are available")
+            print("❌ None of the specified benchmarks are available")
             return {}
         
-        print(f"\n🏗️ Generating testing responses")
+        print("\n🏗️ Generating testing responses")
         print(f"   Available benchmarks: {len(available_benchmarks)}")
         print(f"   Processing benchmarks: {len(benchmarks)}")
         if limit_per_benchmark:
@@ -639,7 +638,7 @@ class TestingResponseGenerator:
         total_time = end_time - start_time
         
         print(f"\n{'='*60}")
-        print(f"GENERATION COMPLETE")
+        print("GENERATION COMPLETE")
         print(f"{'='*60}")
         print(f"⏱️  Total time: {total_time:.1f} seconds")
         print(f"📊 Benchmarks processed: {len(overall_results['benchmarks_processed'])}/{len(benchmarks)}")
@@ -663,7 +662,7 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"🧪 Testing Response Generation")
+    print("🧪 Testing Response Generation")
     print(f"{'='*60}")
     
     # Initialize generator
@@ -691,10 +690,10 @@ def main():
             print(f"   📊 Covering {len(results['benchmarks_processed'])} benchmarks")
             print(f"   🧠 Activations saved for all {generator.num_layers} layers")
         else:
-            print(f"\n⚠️ No responses were generated successfully")
+            print("\n⚠️ No responses were generated successfully")
         
     except KeyboardInterrupt:
-        print(f"\n❌ Generation interrupted by user")
+        print("\n❌ Generation interrupted by user")
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         raise

@@ -239,7 +239,7 @@ class MemoryTracker:
         lines = [
             "Memory Usage Statistics:",
             f"  Duration: {stats.duration_seconds:.2f} seconds",
-            f"  CPU Memory:",
+            "  CPU Memory:",
             f"    Peak: {stats.peak_cpu_mb:.1f} MB",
             f"    Average: {stats.avg_cpu_mb:.1f} MB", 
             f"    Minimum: {stats.min_cpu_mb:.1f} MB",
@@ -247,7 +247,7 @@ class MemoryTracker:
         
         if stats.peak_gpu_mb is not None:
             lines.extend([
-                f"  GPU Memory:",
+                "  GPU Memory:",
                 f"    Peak: {stats.peak_gpu_mb:.1f} MB",
                 f"    Average: {stats.avg_gpu_mb:.1f} MB",
                 f"    Minimum: {stats.min_gpu_mb:.1f} MB",
@@ -262,7 +262,7 @@ class MemoryTracker:
             # Show peak usage snapshot
             peak_snapshot = max(stats.snapshots, key=lambda s: s.cpu_memory_mb)
             lines.extend([
-                f"  Peak Usage Snapshot:",
+                "  Peak Usage Snapshot:",
                 f"    Time: {peak_snapshot.timestamp:.2f}",
                 f"    CPU: {peak_snapshot.cpu_memory_mb:.1f} MB ({peak_snapshot.cpu_memory_percent:.1f}%)",
             ])

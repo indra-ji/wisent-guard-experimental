@@ -3,7 +3,7 @@ Version manager for LiveCodeBench datasets to handle version differences.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Set
+from typing import Dict, Any, List
 from dataclasses import dataclass
 
 from .livecodebench_loader import LiveCodeBenchLoader, LiveCodeBenchProblem
@@ -75,7 +75,7 @@ class LiveCodeBenchVersionManager:
         removed_problems = [base_ids[pid] for pid in removed_ids]
         common_problems = [base_ids[pid] for pid in common_ids]
         
-        logger.info(f"Version difference analysis:")
+        logger.info("Version difference analysis:")
         logger.info(f"  {base_version}: {len(base_problems)} problems")
         logger.info(f"  {target_version}: {len(target_problems)} problems")
         logger.info(f"  Added in {target_version}: {len(added_problems)} problems")

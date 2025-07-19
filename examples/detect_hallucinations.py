@@ -10,7 +10,6 @@ python detect_hallucinations.py
 
 import os
 import argparse
-import json
 import csv
 import subprocess
 import sys
@@ -96,7 +95,7 @@ def main():
     # Save training data
     data_file = save_training_data(qa_pairs, args.output_dir)
     
-    print(f"\n🚀 Running CLI with interactive ground truth evaluation...")
+    print("\n🚀 Running CLI with interactive ground truth evaluation...")
     
     # Run the CLI command directly
     cmd = [

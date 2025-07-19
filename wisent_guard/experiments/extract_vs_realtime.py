@@ -92,7 +92,7 @@ def parse_cli_output(output: str) -> List[Dict]:
                 response_lines = [response_match.group(1).strip()]
         
         # Continue collecting response lines until we hit token scores
-        elif collecting_response and not "🔍 Token Scores:" in line:
+        elif collecting_response and "🔍 Token Scores:" not in line:
             # Add non-empty lines to the response
             if line.strip():
                 response_lines.append(line.strip())
@@ -135,7 +135,7 @@ def parse_cli_output(output: str) -> List[Dict]:
                 temp_tokens = temp_model.tokenizer.encode(current_response, return_tensors="pt")
                 print(f"      📊 Manual tokenization: {len(temp_tokens[0])} tokens from response text")
                 print(f"      📊 CLI claims: {len(current_scores)} scores from 109 total tokens")
-                print(f"      🔍 ISSUE: CLI display shows truncated response but scored full 109-token generation!")
+                print("      🔍 ISSUE: CLI display shows truncated response but scored full 109-token generation!")
                 del temp_model
             
             # Reset for next result
@@ -167,7 +167,7 @@ def extract_post_generation_scores(cli_results: List[Dict]) -> List[Dict]:
     with open("trained_classifier_pkl_layer_15.pkl", "rb") as f:
         steering_method = pickle.load(f)
     
-    print(f"   ✅ Loaded classifier from trained_classifier_pkl_layer_15.pkl")
+    print("   ✅ Loaded classifier from trained_classifier_pkl_layer_15.pkl")
     print(f"   🔍 Loaded object type: {type(steering_method)}")
     if isinstance(steering_method, dict):
         print(f"   🔍 Dict keys: {list(steering_method.keys())}")
@@ -187,7 +187,6 @@ def extract_post_generation_scores(cli_results: List[Dict]) -> List[Dict]:
         
         try:
             # Use the EXACT same methodology as generate_with_classification
-            from wisent_guard.inference import generate_with_classification
             
             # Instead of generating, we'll extract activations token by token from existing text
             full_text = f"{question}{response}"
@@ -277,7 +276,7 @@ def extract_post_generation_scores(cli_results: List[Dict]) -> List[Dict]:
                         print(f"         ⚠️ Classifier error: {e}")
                         post_token_scores.append(0.5)
                 else:
-                    print(f"         ⚠️ No classifier found in loaded object")
+                    print("         ⚠️ No classifier found in loaded object")
                     post_token_scores.append(0.5)
             
             post_gen_results.append({
@@ -297,7 +296,7 @@ def extract_post_generation_scores(cli_results: List[Dict]) -> List[Dict]:
             
             # DEBUG: Check first few feature vectors
             if len(post_token_scores) >= 3:
-                print(f"      🔍 Checking feature extraction for first 3 tokens...")
+                print("      🔍 Checking feature extraction for first 3 tokens...")
                 for debug_idx in range(min(3, len(tokens) - prompt_length)):
                     token_idx = prompt_length + debug_idx
                     if token_idx < hidden_states.shape[1]:

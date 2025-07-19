@@ -15,13 +15,11 @@ import torch
 import json
 import os
 import datetime
-from typing import List, Dict, Any
 import sys
 
 # Add parent directory to path to import wisent_guard
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from wisent_guard import ActivationGuard
 from wisent_guard.classifier import ActivationClassifier
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -523,7 +521,7 @@ def main():
         if device == "mps" and load_kwargs["device_map"] == "cpu":
             model = model.to(device)
             
-        print(f"Model loaded successfully")
+        print("Model loaded successfully")
         
         # Get total number of layers
         if hasattr(model, 'model') and hasattr(model.model, 'layers'):

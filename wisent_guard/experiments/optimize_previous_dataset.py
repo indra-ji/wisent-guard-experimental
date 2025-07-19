@@ -24,9 +24,8 @@ import pickle
 import os
 import sys
 import subprocess
-import glob
-from typing import List, Dict, Tuple, Any
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from typing import List, Dict, Any
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # Add the parent directory to the path so we can import wisent_guard modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -51,8 +50,8 @@ def load_annotated_dataset(filepath: str) -> pd.DataFrame:
         print(f"   🔍 Available columns: {list(df.columns)}")
         raise ValueError("Expected 'response' and 'human_score' columns not found")
     
-    print(f"   🔍 Response column: 'response'")
-    print(f"   🔍 Score column: 'human_score'")
+    print("   🔍 Response column: 'response'")
+    print("   🔍 Score column: 'human_score'")
     
     # Clean the data
     df = df.dropna(subset=['response', 'human_score'])
@@ -213,7 +212,7 @@ def evaluate_classifier(model: Model, test_df: pd.DataFrame, classifier_path: st
     elif hasattr(steering_method, 'classifier'):
         classifier = steering_method.classifier
     else:
-        print(f"   ❌ No classifier found in steering method")
+        print("   ❌ No classifier found in steering method")
         return {}
     
     results = {}
@@ -360,7 +359,7 @@ def main():
         
         if best_overall:
             layer, method, metrics = best_overall
-            print(f"\n🏆 BEST PERFORMANCE:")
+            print("\n🏆 BEST PERFORMANCE:")
             print(f"   Layer: {layer}")
             print(f"   Aggregation: {method}")
             print(f"   Threshold: {metrics['threshold']:.3f}")

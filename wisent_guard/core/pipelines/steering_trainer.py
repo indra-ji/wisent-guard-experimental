@@ -4,14 +4,13 @@ Steering vector trainer that orchestrates the training process.
 
 import torch
 import logging
-from typing import Dict, List, Any, Optional, Type, Tuple
+from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
 import os
 
 from .activation_collector import ActivationCollector, ActivationData
 from ..data_loaders.steering_data_extractor import ContrastivePair
-from ..steering_methods.base import SteeringMethod
 from ..steering_methods.caa import CAA
 from ..contrastive_pairs import ContrastivePairSet
 

@@ -4,7 +4,7 @@ Helper functions for Wisent-Guard
 
 import os
 import torch
-from typing import Dict, List, Tuple, Union, Optional
+from typing import List
 
 def ensure_dir(directory: str) -> None:
     """

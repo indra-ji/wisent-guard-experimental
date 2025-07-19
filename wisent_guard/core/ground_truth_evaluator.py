@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Any, Optional
 from enum import Enum
 import logging
 
@@ -102,13 +102,13 @@ class GroundTruthEvaluator:
                 is_correct = bool(is_actually_correct)
                 
             confidence = 1.0 if is_correct else 0.0
-            details = f"Exact match evaluation using lm-eval harness"
+            details = "Exact match evaluation using lm-eval harness"
             
         except Exception as e:
             logger.warning(f"lm-eval exact match failed: {e}. Using simple string comparison.")
             is_correct = response.strip().lower() == expected_answer.strip().lower()
             confidence = 1.0 if is_correct else 0.0
-            details = f"Simple exact string comparison (lm-eval failed)"
+            details = "Simple exact string comparison (lm-eval failed)"
         
         return {
             "ground_truth": "TRUTHFUL" if is_correct else "HALLUCINATION",

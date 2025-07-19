@@ -4,8 +4,7 @@ import os
 from typing import List, Tuple, Dict, Any, Optional
 from .normalization import (
     VectorNormalizationMethod, 
-    integrate_normalization_with_aggregation,
-    normalize_control_vector
+    integrate_normalization_with_aggregation
 )
 
 class ActivationAggregationMethod(Enum):

@@ -26,15 +26,15 @@ def run_truthfulqa_classification():
     print("="*80)
     print("🎯 TRUTHFULQA HALLUCINATION DETECTION - LAYER 15")
     print("="*80)
-    print(f"📋 Configuration:")
-    print(f"   • Model: meta-llama/Llama-3.1-8B-Instruct")
-    print(f"   • Layer: 15")
-    print(f"   • Dataset: TruthfulQA (entire dataset)")
-    print(f"   • Task: Hallucination detection")
-    print(f"   • Split: 80% train, 20% test")
-    print(f"   • Classifier: Logistic regression")
+    print("📋 Configuration:")
+    print("   • Model: meta-llama/Llama-3.1-8B-Instruct")
+    print("   • Layer: 15")
+    print("   • Dataset: TruthfulQA (entire dataset)")
+    print("   • Task: Hallucination detection")
+    print("   • Split: 80% train, 20% test")
+    print("   • Classifier: Logistic regression")
     print(f"   • Output directory: {output_dir}")
-    print(f"   • CSV will be auto-generated with timestamp")
+    print("   • CSV will be auto-generated with timestamp")
     print("="*80)
     
     # Build the command
@@ -57,7 +57,7 @@ def run_truthfulqa_classification():
         "--show-timing-summary"
     ]
     
-    print(f"🚀 Running command:")
+    print("🚀 Running command:")
     print(f"   {' '.join(cmd)}")
     print()
     

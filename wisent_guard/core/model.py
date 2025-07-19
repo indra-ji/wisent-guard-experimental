@@ -2,7 +2,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import torch.nn.functional as F
 import re
-from typing import Optional, Union, List, Dict, Any, Tuple
+from typing import Optional, List, Dict, Any, Tuple
 from enum import Enum
 from .contrastive_pairs import ContrastivePairSet
 from .user_model_config import user_model_configs
@@ -385,7 +385,7 @@ class Model:
                         token_score.similarity = monitor_result.get('similarity', 0.0)
                         token_score.is_harmful = monitor_result.get('is_harmful', False)
                         token_score.category = monitor_result.get('category', 'unknown')
-                except Exception as e:
+                except Exception:
                     # Continue generation even if monitoring fails
                     pass
             
@@ -463,7 +463,7 @@ class Model:
                             generation_kwargs["temperature"] = generation_kwargs.get("temperature", 0.7) + 0.1
                             continue
                         else:
-                            print(f"⚠️ Max regeneration attempts reached, returning potentially nonsensical response")
+                            print("⚠️ Max regeneration attempts reached, returning potentially nonsensical response")
                 
                 # Add nonsense detection results to output if flagging
                 if nonsense_detector is not None and nonsense_action == "flag":
@@ -487,7 +487,6 @@ class Model:
     def _generate_with_timing(self, formatted_prompt: str, layer_index: int, max_new_tokens: int, 
                              enable_gradients: bool, gen_state=None, **generation_kwargs):
         """Helper method to handle generation with optional timing tracking."""
-        import time
         
         # Prepare inputs
         inputs = self.tokenizer(formatted_prompt, return_tensors="pt", padding=True, truncation=True)
@@ -744,7 +743,7 @@ class Model:
                                 "score": score
                             }
                         
-                    except Exception as e:
+                    except Exception:
                         # Continue with next combination
                         pass
         
@@ -1227,6 +1226,6 @@ except ImportError:
     def _is_valid_task(task_name):
         return False
     def _resolve_task_name(task_name):
-        raise ValueError(f"Task management system not available")
+        raise ValueError("Task management system not available")
     def load_docs(task, limit=None):
-        raise ValueError(f"Task management system not available")
+        raise ValueError("Task management system not available")

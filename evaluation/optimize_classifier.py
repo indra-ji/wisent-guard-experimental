@@ -8,7 +8,6 @@ to find the optimal configuration for hallucination detection.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import re
 import os
 import json
 import argparse
@@ -88,7 +87,7 @@ def extract_token_scores_from_csv(results_file):
                                 'category': token_category,
                                 'is_harmful': is_harmful
                             })
-                    except Exception as e:
+                    except Exception:
                         # Skip problematic token
                         continue
                 

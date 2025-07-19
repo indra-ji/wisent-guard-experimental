@@ -411,7 +411,7 @@ class LatencyTracker:
         training_metrics = self.get_training_metrics()
         if training_metrics:
             lines.extend([
-                f"\n📚 Training:",
+                "\n📚 Training:",
                 f"  Method: {training_metrics.method}",
                 f"  Total Time: {training_metrics.training_time_ms:.0f} ms",
                 f"  Samples: {training_metrics.training_samples}",
@@ -426,7 +426,7 @@ class LatencyTracker:
         
         if generation_metrics and generation_metrics.token_count > 0:
             lines.extend([
-                f"\n🎭 Generation:",
+                "\n🎭 Generation:",
                 f"  Time to First Token: {generation_metrics.ttft_ms:.0f} ms",
                 f"  Total Generation: {generation_metrics.total_time_ms:.0f} ms",
                 f"  Tokens Generated: {generation_metrics.token_count}",
@@ -443,7 +443,7 @@ class LatencyTracker:
             overhead = ((steered_avg - unsteered_avg) / unsteered_avg) * 100
             
             lines.extend([
-                f"\n⚡ Steering Overhead:",
+                "\n⚡ Steering Overhead:",
                 f"  Unsteered Avg: {unsteered_avg * 1000:.0f} ms ({len(unsteered_events)} runs)",
                 f"  Steered Avg: {steered_avg * 1000:.0f} ms ({len(steered_events)} runs)",
                 f"  Overhead: {overhead:+.1f}%"
@@ -452,22 +452,22 @@ class LatencyTracker:
             # Show steered performance even without comparison
             steered_avg = sum(e.duration for e in steered_events) / len(steered_events)
             lines.extend([
-                f"\n🎯 Steered Generation:",
+                "\n🎯 Steered Generation:",
                 f"  Average Time: {steered_avg * 1000:.0f} ms ({len(steered_events)} runs)"
             ])
         elif unsteered_events:
             # Show unsteered performance even without comparison
             unsteered_avg = sum(e.duration for e in unsteered_events) / len(unsteered_events)
             lines.extend([
-                f"\n🔄 Unsteered Generation:",
+                "\n🔄 Unsteered Generation:",
                 f"  Average Time: {unsteered_avg * 1000:.0f} ms ({len(unsteered_events)} runs)"
             ])
         
         # Show warning if no generation metrics found
         if not generation_metrics or generation_metrics.token_count == 0:
             lines.extend([
-                f"\n⚠️ No generation metrics available",
-                f"  (Responses may be empty or timing failed)"
+                "\n⚠️ No generation metrics available",
+                "  (Responses may be empty or timing failed)"
             ])
         
         return '\n'.join(lines)
@@ -507,7 +507,7 @@ class LatencyTracker:
             ])
         
         if detailed and stats.events:
-            lines.append(f"Recent Events:")
+            lines.append("Recent Events:")
             for event in stats.events[-5:]:  # Show last 5 events
                 lines.append(f"  {event.duration_ms:.1f} ms")
                 if event.metadata:

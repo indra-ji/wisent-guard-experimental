@@ -4,11 +4,8 @@ Model persistence utilities for saving and loading trained classifiers and steer
 
 import os
 import pickle
-import json
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 import torch
-import numpy as np
-from pathlib import Path
 
 
 class ModelPersistence:
@@ -208,7 +205,7 @@ class ModelPersistence:
         models = {}
         
         for filename in os.listdir(model_dir):
-            if filename.endswith(extension) and f"_layer_" in filename:
+            if filename.endswith(extension) and "_layer_" in filename:
                 # Extract base name and layer
                 parts = filename.replace(extension, "").split("_layer_")
                 if len(parts) == 2:

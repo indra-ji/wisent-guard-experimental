@@ -5,8 +5,7 @@ while transparently applying steering vectors.
 """
 
 import torch
-import torch.nn as nn
-from typing import Dict, Any, Optional, Union, List
+from typing import Dict, Any, Optional, Union
 from transformers import GPT2LMHeadModel, GPT2Config, AutoModel, AutoConfig
 from transformers.modeling_outputs import CausalLMOutputWithPast
 import json

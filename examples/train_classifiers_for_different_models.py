@@ -15,13 +15,12 @@ python train_classifiers_for_different_models.py [--content-type TYPE]
 
 import os
 import argparse
-import torch
 import time
 import pandas as pd
 from tqdm import tqdm
 
 # Import utilities from our generalized content detector
-import sys, os
+import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from examples.utils.content_detector import (
     get_device, 

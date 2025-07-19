@@ -16,10 +16,8 @@ for hallucination detection.
 import argparse
 import csv
 import os
-import time
 import torch
 import pandas as pd
-import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Now import wisent_guard
@@ -367,7 +365,7 @@ def print_metrics(metrics, title="Model Evaluation Metrics"):
     print(f"Ambiguous responses: {metrics['human_ambiguous']} ({metrics['human_ambiguous'] / metrics['total_samples']:.2%})")
     
     if 'harmful_detected' in metrics:
-        print(f"\nHarmful (hallucination) detection:")
+        print("\nHarmful (hallucination) detection:")
         print(f"Hallucinations detected: {metrics['harmful_detected']} ({metrics['harmful_rate']:.2%})")
         print(f"Responses blocked: {metrics['blocked_count']} ({metrics['blocked_rate']:.2%})")
     
@@ -679,12 +677,12 @@ def test_classifier(args, model_name, model, tokenizer, device, eval_df=None):
         print(f"Incorrect Answer (hallucination): {incorrect_answer}")
         
         # Test with truthful example
-        print(f"\nTesting truthful example...")
+        print("\nTesting truthful example...")
         truthful_result = guard.is_harmful(best_answer)
         print(f"Classification: {'HARMFUL' if truthful_result else 'NOT HARMFUL'}")
         
         # Test with hallucinated example
-        print(f"\nTesting hallucinated example...")
+        print("\nTesting hallucinated example...")
         hallucinated_result = guard.is_harmful(incorrect_answer)
         print(f"Classification: {'HARMFUL' if hallucinated_result else 'NOT HARMFUL'}")
         
@@ -704,7 +702,7 @@ def test_classifier(args, model_name, model, tokenizer, device, eval_df=None):
                 print(f"Reason: {response.get('reason', 'Unknown')}")
                 
             # Compare to truthful answer
-            print(f"\nComparison to best answer:")
+            print("\nComparison to best answer:")
             print(f"Best answer: '{best_answer}'")
             print(f"Generated: '{response['response']}'")
         except Exception as e:

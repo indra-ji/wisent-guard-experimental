@@ -9,8 +9,7 @@ sys.path.insert(0, str(project_root))
 
 from wisent_guard.core.model import Model
 from wisent_guard.core.agent.diagnose.synthetic_classifier_option import (
-    create_classifiers_for_prompt,
-    apply_classifiers_to_response
+    create_classifiers_for_prompt
 )
 from wisent_guard.core.agent.budget import set_time_budget
 

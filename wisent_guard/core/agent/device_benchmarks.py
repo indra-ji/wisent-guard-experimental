@@ -12,9 +12,8 @@ import os
 import tempfile
 import subprocess
 import sys
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional
 from dataclasses import dataclass, asdict
-from pathlib import Path
 import hashlib
 
 
@@ -538,7 +537,7 @@ except Exception as e:
         try:
             model_loading = self.run_model_loading_benchmark()
             if model_loading is None:
-                print(f"   ❌ Model loading benchmark returned None")
+                print("   ❌ Model loading benchmark returned None")
                 raise RuntimeError("Model loading benchmark failed")
         except Exception as e:
             print(f"   ❌ Model loading benchmark failed: {e}")
@@ -547,7 +546,7 @@ except Exception as e:
         try:
             benchmark_eval = self.run_benchmark_eval_test()
             if benchmark_eval is None:
-                print(f"   ⚠️ Evaluation benchmark returned None, using default value")
+                print("   ⚠️ Evaluation benchmark returned None, using default value")
                 benchmark_eval = 60.0  # Default 60 seconds per 100 examples
         except Exception as e:
             print(f"   ❌ Evaluation benchmark failed: {e}")
@@ -556,7 +555,7 @@ except Exception as e:
         try:
             classifier_training = self.run_classifier_training_test()
             if classifier_training is None:
-                print(f"   ⚠️ Classifier training benchmark returned None, using default value")
+                print("   ⚠️ Classifier training benchmark returned None, using default value")
                 classifier_training = 600.0  # Default 600 seconds per 100 classifiers
         except Exception as e:
             print(f"   ❌ Classifier training benchmark failed: {e}")
@@ -565,7 +564,7 @@ except Exception as e:
         try:
             steering = self.run_steering_test()
             if steering is None:
-                print(f"   ❌ Steering benchmark returned None")
+                print("   ❌ Steering benchmark returned None")
                 raise RuntimeError("Steering benchmark failed")
         except Exception as e:
             print(f"   ❌ Steering benchmark failed: {e}")
@@ -574,7 +573,7 @@ except Exception as e:
         try:
             data_generation = self.run_data_generation_test()
             if data_generation is None:
-                print(f"   ❌ Data generation benchmark returned None")
+                print("   ❌ Data generation benchmark returned None")
                 raise RuntimeError("Data generation benchmark failed")
         except Exception as e:
             print(f"   ❌ Data generation benchmark failed: {e}")
@@ -635,7 +634,7 @@ except Exception as e:
         """
         benchmark = self.get_current_benchmark()
         if not benchmark:
-            raise RuntimeError(f"No benchmark available for device. Run benchmark first with: python -m wisent_guard.core.agent.budget benchmark")
+            raise RuntimeError("No benchmark available for device. Run benchmark first with: python -m wisent_guard.core.agent.budget benchmark")
         else:
             # Use actual benchmark results
             if task_type == "model_loading":

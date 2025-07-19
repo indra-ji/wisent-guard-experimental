@@ -10,7 +10,6 @@ import os
 import re
 import random
 import yaml
-import tempfile
 import glob
 from typing import List, Dict, Any, Optional, Tuple
 from difflib import SequenceMatcher
@@ -54,7 +53,7 @@ def load_available_tasks() -> List[str]:
             # Extract task names from the formatted output
             task_names = []
             for line in result.stdout.split('\n'):
-                if '|' in line and not line.startswith('|---') and not 'Group' in line and not 'Config Location' in line:
+                if '|' in line and not line.startswith('|---') and 'Group' not in line and 'Config Location' not in line:
                     parts = line.split('|')
                     if len(parts) >= 2:
                         task_name = parts[1].strip()
@@ -65,14 +64,11 @@ def load_available_tasks() -> List[str]:
         except Exception:
             # Final fallback - try to discover from lm_eval module
             try:
-                import lm_eval.tasks
                 # Get all available task names through introspection
-                from lm_eval.tasks import get_task_dict
                 # This will fail for invalid tasks, so we need another approach
                 
                 # Try to get task names from lm_eval internals
                 try:
-                    import lm_eval.tasks.openbookqa  # Import a known task module to trigger loading
                     from lm_eval.api.registry import TASK_REGISTRY
                     return list(TASK_REGISTRY.keys())
                 except:
@@ -289,7 +285,6 @@ def handle_configurable_group_task(task_name: str):
     print(f"   🔍 Searching for custom YAML configuration for {task_name}")
     
     import os
-    import glob
     
     # For specific custom tasks like flan_held_in, create the YAML files if needed
     if task_name == "flan_held_in":
@@ -308,7 +303,7 @@ def handle_configurable_group_task(task_name: str):
                     return task, task_name
                 
                 # If the group task doesn't load directly, try to extract individual tasks
-                print(f"   🔍 Extracting individual tasks from group...")
+                print("   🔍 Extracting individual tasks from group...")
                 individual_tasks = extract_individual_tasks_from_yaml(yaml_file_path, task_name)
                 if individual_tasks:
                     print(f"   📋 Found individual tasks: {individual_tasks[:3]}...")
@@ -604,7 +599,6 @@ def try_find_related_working_task(task_name: str):
         Tuple of (task_object, task_name) or None if absolutely no alternatives found
     """
     try:
-        from lm_eval.tasks import get_task_dict
         from lm_eval.tasks import TaskManager as LMTaskManager
         
         # Ensure TaskManager is properly initialized
@@ -765,7 +759,7 @@ def try_extract_working_tasks_from_group(group_name: str, task_manager):
                                 print(f"      ❌ Initial task {task_name} failed: {str(e)[:50]}")
                                 continue
                     else:
-                        print(f"   ⚠️  No task names found in main YAML structure")
+                        print("   ⚠️  No task names found in main YAML structure")
                     
                 except Exception as yaml_parse_error:
                     print(f"   ⚠️  Main YAML parsing failed: {str(yaml_parse_error)[:100]}")
@@ -819,7 +813,7 @@ def try_extract_working_tasks_from_group(group_name: str, task_manager):
                     # Fall through to generic catch-all approach below
         
         # FINAL GENERIC CATCH-ALL: If all YAML approaches fail, search registry intelligently
-        print(f"   🔍 FINAL CATCH-ALL: Searching registry for tasks matching group pattern...")
+        print("   🔍 FINAL CATCH-ALL: Searching registry for tasks matching group pattern...")
         
         # Search for tasks that contain the group name or parts of it
         all_tasks = getattr(task_manager, 'all_tasks', set())
@@ -1083,7 +1077,7 @@ task:
         with open(main_path, 'w') as f:
             f.write(main_content)
         
-        print(f"   💾 Created flan_held_in YAML files:")
+        print("   💾 Created flan_held_in YAML files:")
         print(f"      📄 Template: {template_path}")
         print(f"      📄 Main: {main_path}")
         
@@ -1118,7 +1112,7 @@ def load_task_with_config_dir(task_name: str, config_dir: str):
             # Check if LMTaskManager has config path functionality
             task_manager = LMTaskManager()
             if hasattr(task_manager, 'initialize_tasks') or hasattr(task_manager, 'load_config'):
-                print(f"      🔧 Using TaskManager approach")
+                print("      🔧 Using TaskManager approach")
                 return get_task_dict([task_name], task_manager=task_manager)
         except Exception as e:
             print(f"      ⚠️ TaskManager approach failed: {e}")
@@ -1128,7 +1122,7 @@ def load_task_with_config_dir(task_name: str, config_dir: str):
         try:
             if config_dir not in sys.path:
                 sys.path.insert(0, config_dir)
-            print(f"      🔧 Added config dir to Python path")
+            print("      🔧 Added config dir to Python path")
             return get_task_dict([task_name])
         except Exception as e:
             print(f"      ⚠️ Python path approach failed: {e}")
@@ -1142,7 +1136,7 @@ def load_task_with_config_dir(task_name: str, config_dir: str):
             for env_var in env_vars:
                 original_env[env_var] = os.environ.get(env_var)
                 os.environ[env_var] = config_dir
-            print(f"      🔧 Set environment variables")
+            print("      🔧 Set environment variables")
             return get_task_dict([task_name])
         except Exception as e:
             print(f"      ⚠️ Environment variable approach failed: {e}")
@@ -1154,7 +1148,7 @@ def load_task_with_config_dir(task_name: str, config_dir: str):
                     os.environ[env_var] = original_env[env_var]
         
         # Method 4: Fall back to basic loading
-        print(f"      🔧 Falling back to basic task loading")
+        print("      🔧 Falling back to basic task loading")
         return get_task_dict([task_name])
                 
     except Exception as e:
@@ -1302,7 +1296,6 @@ class TaskManager:
         Returns:
             Tuple of (training_docs, testing_docs)
         """
-        import random
         
         # Load documents with limit if specified
         limit = getattr(task_data, '_limit', None)

@@ -12,7 +12,6 @@ This helps understand:
 - Whether certain benchmarks or layers need more data than others
 """
 
-import os
 import sys
 import json
 import pickle
@@ -21,14 +20,10 @@ import time
 import argparse
 import subprocess
 import matplotlib.pyplot as plt
-import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
 from datetime import datetime
-import seaborn as sns
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 
 # Add project root to path
 current_dir = Path(__file__).parent
@@ -81,7 +76,7 @@ class SampleSizeEvaluator:
         # Sample sizes to evaluate
         self.sample_sizes = [1, 5, 10, 50, 100, 250, 500, 1000]
         
-        print(f"🔬 Sample Size Evaluator")
+        print("🔬 Sample Size Evaluator")
         print(f"   Model: {model_name}")
         print(f"   Benchmark: {benchmark_name}")
         print(f"   Layer: {layer}")
@@ -230,7 +225,7 @@ class SampleSizeEvaluator:
                         'sample_size': sample_size
                     }
                 else:
-                    print(f"   ❌ CLI completed but no classifier file found")
+                    print("   ❌ CLI completed but no classifier file found")
                     return {
                         'status': 'no_output',
                         'execution_time': execution_time,
@@ -248,7 +243,7 @@ class SampleSizeEvaluator:
                 }
                 
         except subprocess.TimeoutExpired:
-            print(f"   ❌ Training timed out after 30 minutes")
+            print("   ❌ Training timed out after 30 minutes")
             return {
                 'status': 'timeout',
                 'execution_time': 1800,
@@ -371,7 +366,7 @@ class SampleSizeEvaluator:
         Returns:
             Dictionary containing evaluation results
         """
-        print(f"\n🚀 Starting sample size evaluation")
+        print("\n🚀 Starting sample size evaluation")
         print(f"   Model: {self.model_name}")
         print(f"   Benchmark: {self.benchmark_name}")
         print(f"   Layer: {self.layer}")
@@ -399,7 +394,7 @@ class SampleSizeEvaluator:
         if test_activations is None:
             return {'error': f'Activations for layer {self.layer} are None'}
         
-        print(f"📊 Test data loaded:")
+        print("📊 Test data loaded:")
         print(f"   Test samples: {len(test_responses)}")
         print(f"   Activations shape: {test_activations.shape}")
         print(f"   Labels: {len(test_labels)} ({sum(1 for l in test_labels if l == 'GOOD')} GOOD, {sum(1 for l in test_labels if l == 'BAD')} BAD)")
@@ -422,7 +417,7 @@ class SampleSizeEvaluator:
             }
         }
         
-        print(f"\n🏗️ Training classifiers with different sample sizes...")
+        print("\n🏗️ Training classifiers with different sample sizes...")
         for sample_size in self.sample_sizes:
             print(f"\n[{sample_size:4d} samples] Training classifier...")
             
@@ -452,7 +447,7 @@ class SampleSizeEvaluator:
                         print(f"   ❌ Evaluation failed: {evaluation_result['error']}")
                 else:
                     results['summary']['failed_evaluations'] += 1
-                    print(f"   ❌ Failed to load classifier")
+                    print("   ❌ Failed to load classifier")
         
         # Step 5: Save results
         self.save_results(results)
@@ -556,17 +551,17 @@ class SampleSizeEvaluator:
     def print_summary(self, results: Dict[str, Any]):
         """Print evaluation summary."""
         print(f"\n{'='*80}")
-        print(f"🔬 SAMPLE SIZE EVALUATION SUMMARY")
+        print("🔬 SAMPLE SIZE EVALUATION SUMMARY")
         print(f"{'='*80}")
         
-        print(f"📊 Configuration:")
+        print("📊 Configuration:")
         print(f"   Model: {self.model_name}")
         print(f"   Benchmark: {self.benchmark_name}")
         print(f"   Layer: {self.layer}")
         print(f"   Sample sizes tested: {self.sample_sizes}")
         
         summary = results['summary']
-        print(f"\n📈 Results:")
+        print("\n📈 Results:")
         print(f"   Total trained: {summary['total_trained']}/{len(self.sample_sizes)}")
         print(f"   Total evaluated: {summary['total_evaluated']}/{len(self.sample_sizes)}")
         print(f"   Successful evaluations: {summary['successful_evaluations']}")
@@ -574,7 +569,7 @@ class SampleSizeEvaluator:
         
         # Show performance by sample size
         if results['evaluation_results']:
-            print(f"\n📊 Performance by Sample Size:")
+            print("\n📊 Performance by Sample Size:")
             print(f"   {'Size':>6} {'Accuracy':>9} {'F1 Score':>9} {'Precision':>9} {'Recall':>9}")
             print(f"   {'-'*50}")
             
@@ -607,7 +602,7 @@ class SampleSizeEvaluator:
                         best_sample_size = sample_size
         
         if best_sample_size:
-            print(f"\n🏆 Best Performance:")
+            print("\n🏆 Best Performance:")
             print(f"   Sample size: {best_sample_size}")
             print(f"   Accuracy: {best_accuracy:.3f}")
             
@@ -642,7 +637,7 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"🔬 Sample Size Evaluation")
+    print("🔬 Sample Size Evaluation")
     print(f"{'='*80}")
     
     # Initialize evaluator
@@ -664,10 +659,10 @@ def main():
         if 'error' in results:
             print(f"\n❌ Evaluation failed: {results['error']}")
         else:
-            print(f"\n✅ Evaluation completed successfully!")
+            print("\n✅ Evaluation completed successfully!")
             
     except KeyboardInterrupt:
-        print(f"\n❌ Evaluation interrupted by user")
+        print("\n❌ Evaluation interrupted by user")
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         raise

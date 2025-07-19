@@ -10,7 +10,6 @@ Usage:
     python download_full_benchmarks.py --all  # Download all benchmarks
 """
 
-import os
 import sys
 import time
 import argparse
@@ -52,7 +51,7 @@ class FullBenchmarkDownloader:
         self.data_dir.mkdir(exist_ok=True)
         self.metadata_dir.mkdir(exist_ok=True)
         
-        print(f"🚀 Full Benchmark Downloader")
+        print("🚀 Full Benchmark Downloader")
         print(f"📁 Download directory: {self.download_dir.absolute()}")
     
     def download_complete_benchmark(self, benchmark_name: str, benchmark_config: dict, force: bool = False) -> Optional[str]:
@@ -85,7 +84,6 @@ class FullBenchmarkDownloader:
         
         try:
             # Import lm_eval to download complete datasets
-            import lm_eval
             from lm_eval import tasks
             
             # Get the task
@@ -234,7 +232,7 @@ class FullBenchmarkDownloader:
             unavailable_requested = [name for name in benchmarks if name in self.UNAVAILABLE_BENCHMARKS]
             if unavailable_requested:
                 print(f"⚠️  Requested benchmarks are known to be unavailable: {unavailable_requested}")
-                print(f"   🔧 These will likely fail. Remove from list to avoid delays.")
+                print("   🔧 These will likely fail. Remove from list to avoid delays.")
         
         print(f"\n🏗️ Downloading {len(benchmarks_to_download)} complete benchmarks")
         print(f"   Force redownload: {force}")
@@ -287,7 +285,7 @@ class FullBenchmarkDownloader:
         Returns:
             Dictionary with contrastive pairs
         """
-        print(f"      🔄 Converting to contrastive pairs...")
+        print("      🔄 Converting to contrastive pairs...")
         
         contrastive_pairs = []
         
@@ -788,23 +786,23 @@ def main():
         print(f"📁 Download directory: {downloader.download_dir.absolute()}")
         
         if results["successful"]:
-            print(f"\n🎯 Successfully downloaded:")
+            print("\n🎯 Successfully downloaded:")
             for benchmark in results["successful"]:
                 print(f"   ✅ {benchmark}")
         
         if results["failed"]:
-            print(f"\n❌ Failed downloads:")
+            print("\n❌ Failed downloads:")
             for benchmark in results["failed"]:
                 print(f"   ❌ {benchmark}")
         
         if results["excluded"]:
-            print(f"\n🚫 Excluded (known unavailable):")
+            print("\n🚫 Excluded (known unavailable):")
             excluded_list = sorted(results["excluded"])
             for i in range(0, len(excluded_list), 4):  # Show 4 per line
                 line_items = excluded_list[i:i+4]
                 print(f"   🚫 {', '.join(line_items)}")
         
-        print(f"\n📊 Complete benchmark data saved in:")
+        print("\n📊 Complete benchmark data saved in:")
         print(f"   📁 Data: {downloader.data_dir}")
         print(f"   📁 Metadata: {downloader.metadata_dir}")
         

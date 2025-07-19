@@ -14,12 +14,11 @@ to capturing model internal representations.
 """
 
 import torch
-from typing import List, Dict, Tuple, Callable
+from typing import List, Dict, Tuple
 from enum import Enum
 from .layer import Layer
 from .activations import Activations, ActivationAggregationMethod
 from .contrastive_pairs import ContrastivePair
-from .response import PositiveResponse, NegativeResponse
 
 try:
     from .contrastive_pairs import ContrastivePair
@@ -312,7 +311,7 @@ class ActivationCollectionLogic:
         Returns:
             Activation tensor [hidden_dim]
         """
-        print(f"🎯 _get_activation_with_strategy called:")
+        print("🎯 _get_activation_with_strategy called:")
         print(f"   📊 Strategy: {strategy.value}")
         print(f"   📊 Target token: {target_token}")
         print(f"   📊 Tokens: {tokens[:5]}..." if len(tokens) > 5 else f"   📊 Tokens: {tokens}")
@@ -476,7 +475,7 @@ class ActivationCollectionLogic:
         
         print(f"Processing {len(pairs)} contrastive pairs...")
         print(f"Token targeting strategy: {token_targeting_strategy.value}")
-        print(f"🔍 ACTIVATION COLLECTION DEBUG:")
+        print("🔍 ACTIVATION COLLECTION DEBUG:")
         print(f"   📊 Strategy passed to method: {token_targeting_strategy}")
         print(f"   📊 Strategy value: {token_targeting_strategy.value}")
         print(f"   📊 Strategy type: {type(token_targeting_strategy)}")
@@ -490,7 +489,7 @@ class ActivationCollectionLogic:
         # Debug first pair details
         if pairs:
             first_pair = pairs[0]
-            print(f"🔍 FIRST PAIR DEBUG:")
+            print("🔍 FIRST PAIR DEBUG:")
             print(f"   📝 Pair type: {type(first_pair).__name__}")
             print(f"   📝 Has _prompt_strategy: {hasattr(first_pair, '_prompt_strategy')}")
             print(f"   📝 Has _prompt_pair: {hasattr(first_pair, '_prompt_pair')}")

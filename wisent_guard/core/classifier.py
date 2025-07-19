@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader, random_split
-from typing import List, Dict, Any, Optional, Union
+from typing import List, Dict, Any, Optional
 import logging
 import os
 
@@ -278,7 +278,7 @@ class Classifier:
             try:
                 auc = calculate_roc_auc(all_labels, all_probs)
                 metrics['auc'].append(auc)
-            except Exception as e:
+            except Exception:
                 metrics['auc'].append(0.0)
             
             # Print progress
@@ -594,7 +594,6 @@ class ActivationClassifier:
         harmless_activations: List['Activations']
     ) -> Dict[str, Any]:
         """Train classifier on activation data."""
-        from .activations import Activations
         
         # Prepare training data
         X = []

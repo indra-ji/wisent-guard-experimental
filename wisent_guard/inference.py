@@ -328,7 +328,7 @@ def generate_with_classification_and_handling(
     Returns:
         Tuple of (final_response_text, token_scores, classification, was_handled)
     """
-    from .core.detection_handling import DetectionHandler, DetectionAction
+    from .core.detection_handling import DetectionAction
     from .core.parser import aggregate_token_scores
     
     # Generate initial response with classification
@@ -679,8 +679,7 @@ def generate_with_multi_layer_classification_and_handling(
     Returns:
         Tuple of (final_response_text, layer_results_dict, was_handled)
     """
-    from .core.detection_handling import DetectionHandler, DetectionAction
-    from .core.parser import aggregate_token_scores
+    from .core.detection_handling import DetectionAction
     
     # Generate initial response with multi-layer classification
     original_response, layer_results = generate_with_multi_layer_classification(

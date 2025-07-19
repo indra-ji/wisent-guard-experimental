@@ -1,8 +1,7 @@
 import json
-import torch
 import random
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Optional
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
@@ -276,7 +275,7 @@ Brief answer showing non-{trait_description}:"""
         pair.scenario = scenario
         pair.trait_description = trait_description
         
-        print(f"🔄 DEBUG: Created contrastive pair successfully")
+        print("🔄 DEBUG: Created contrastive pair successfully")
         
         return pair
     

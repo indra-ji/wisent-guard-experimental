@@ -198,7 +198,7 @@ class MBPPExtractor(BenchmarkExtractor):
                     # Off-by-one error
                     if '+' in line:
                         lines[i] = line.replace('+', '+ 1 +')
-                    elif '-' in line and not '--' in line:
+                    elif '-' in line and '--' not in line:
                         lines[i] = line.replace('-', '- 1 -')
                     return '\n'.join(lines)
                     
@@ -218,7 +218,7 @@ class MBPPExtractor(BenchmarkExtractor):
                     
         # Default: wrong return type
         for i, line in enumerate(lines):
-            if 'return' in line and not 'return None' in line:
+            if 'return' in line and 'return None' not in line:
                 lines[i] = '    return None  # Bug: wrong return'
                 return '\n'.join(lines)
                 

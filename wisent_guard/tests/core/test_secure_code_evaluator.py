@@ -10,7 +10,7 @@ from wisent_guard.core.secure_code_evaluator import (
     enforce_secure_execution,
     CODE_EXECUTION_TASKS,
 )
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 class TestSecureCodeEvaluator:

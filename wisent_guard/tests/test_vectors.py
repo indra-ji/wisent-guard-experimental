@@ -3,7 +3,6 @@ Tests for the ContrastiveVectors class
 """
 
 import os
-import torch
 import pytest
 import tempfile
 import shutil

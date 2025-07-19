@@ -28,8 +28,7 @@ import json
 import os
 import sys
 import subprocess
-import tempfile
-from typing import Dict, List, Optional
+from typing import Dict, List
 from pathlib import Path
 import re
 
@@ -78,7 +77,6 @@ def get_task_samples_for_analysis(task_name: str, num_samples: int = 5, trust_re
         if trust_remote_code:
             try:
                 import io
-                import sys
                 from unittest.mock import patch
                 from lm_eval import evaluator
                 
@@ -931,9 +929,9 @@ def test_single_benchmark_direct(benchmark_name: str, benchmark_config: dict) ->
     print(f"🎯 Testing: {benchmark_name} ({task_name})")
     print(f"🏷️  Tags: {', '.join(tags)}")
     if trust_remote_code:
-        print(f"🔐 Trust remote code: ENABLED")
+        print("🔐 Trust remote code: ENABLED")
     if use_subtasks:
-        print(f"📦 Use subtasks: ENABLED")
+        print("📦 Use subtasks: ENABLED")
         if limit_subtasks:
             print(f"📊 Limit subtasks: {limit_subtasks}")
     print(f"{'='*60}")
@@ -954,7 +952,7 @@ def test_single_benchmark_direct(benchmark_name: str, benchmark_config: dict) ->
             "--verbose"
         ]
         
-        print(f"🧪 Running command:")
+        print("🧪 Running command:")
         print(f"   {' '.join(cmd)}")
         
         # Set working directory to project root
@@ -1011,8 +1009,8 @@ def test_single_benchmark_direct(benchmark_name: str, benchmark_config: dict) ->
             
             # Check if it's a recoverable error
             if result.stderr and "trust_remote_code" in result.stderr.lower() and not trust_remote_code:
-                print(f"🔄 Detected trust_remote_code error, but benchmark not configured for it")
-                print(f"💡 Consider adding 'trust_remote_code': True to benchmark config")
+                print("🔄 Detected trust_remote_code error, but benchmark not configured for it")
+                print("💡 Consider adding 'trust_remote_code': True to benchmark config")
             
             return False
             
@@ -1087,12 +1085,12 @@ def test_benchmark_creation(benchmark_name: str, benchmark_config: dict) -> tupl
     if tags:
         print(f"🏷️  Predefined tags: {', '.join(tags)}")
     else:
-        print(f"🏷️  Tags will be auto-determined from README")
+        print("🏷️  Tags will be auto-determined from README")
     
     if trust_remote_code:
-        print(f"🔐 Trust remote code: ENABLED")
+        print("🔐 Trust remote code: ENABLED")
     if use_subtasks:
-        print(f"📦 Use subtasks: ENABLED")
+        print("📦 Use subtasks: ENABLED")
         if limit_subtasks:
             print(f"📊 Limit subtasks: {limit_subtasks}")
     
@@ -1114,25 +1112,25 @@ def test_benchmark_creation(benchmark_name: str, benchmark_config: dict) -> tupl
             
             # Try fallback strategies based on error type
             if "trust_remote_code" in error_msg and not trust_remote_code:
-                print(f"🔄 Retrying with trust_remote_code=True...")
+                print("🔄 Retrying with trust_remote_code=True...")
                 result = get_task_samples_for_analysis(task_name, num_samples=5, 
                                                      trust_remote_code=True)
                 if "error" not in result:
-                    print(f"✅ Success with trust_remote_code=True")
+                    print("✅ Success with trust_remote_code=True")
                 else:
-                    print(f"❌ Still failed with trust_remote_code=True - WILL CAUSE SCRIPT TO EXIT")
+                    print("❌ Still failed with trust_remote_code=True - WILL CAUSE SCRIPT TO EXIT")
                     return False, tags
             elif "not found" in error_msg.lower():
                 # Try alternative task names
                 alternative_results = try_alternative_task_names(benchmark_name, task_name, num_samples=5, trust_remote_code=trust_remote_code)
                 if alternative_results:
                     result = alternative_results
-                    print(f"✅ Success with alternative task name")
+                    print("✅ Success with alternative task name")
                 else:
-                    print(f"❌ No alternative task names worked - WILL CAUSE SCRIPT TO EXIT")
+                    print("❌ No alternative task names worked - WILL CAUSE SCRIPT TO EXIT")
                     return False, tags
             else:
-                print(f"❌ Unhandled error type - WILL CAUSE SCRIPT TO EXIT")
+                print("❌ Unhandled error type - WILL CAUSE SCRIPT TO EXIT")
                 return False, tags
         
         if not result.get("samples"):
@@ -1140,16 +1138,16 @@ def test_benchmark_creation(benchmark_name: str, benchmark_config: dict) -> tupl
             
             # Try subtask approach if not already tried
             if not use_subtasks:
-                print(f"🔄 Trying subtask approach...")
+                print("🔄 Trying subtask approach...")
                 result = get_task_samples_with_subtasks(task_name, num_samples=5, 
                                                       trust_remote_code=trust_remote_code)
                 if result.get("samples"):
-                    print(f"✅ Success with subtask approach")
+                    print("✅ Success with subtask approach")
                 else:
-                    print(f"❌ No samples found with subtask approach - WILL CAUSE SCRIPT TO EXIT")
+                    print("❌ No samples found with subtask approach - WILL CAUSE SCRIPT TO EXIT")
                     return False, tags
             else:
-                print(f"❌ No samples found even with subtask approach - WILL CAUSE SCRIPT TO EXIT")
+                print("❌ No samples found even with subtask approach - WILL CAUSE SCRIPT TO EXIT")
                 return False, tags
         
         print(f"✅ Successfully retrieved {len(result['samples'])} samples")
@@ -1175,13 +1173,13 @@ def test_benchmark_creation(benchmark_name: str, benchmark_config: dict) -> tupl
         
         # Try one more fallback approach
         try:
-            print(f"🔄 Trying fallback approach...")
+            print("🔄 Trying fallback approach...")
             result = get_task_samples_fallback(task_name, num_samples=5, trust_remote_code=trust_remote_code)
             if result.get("samples"):
-                print(f"✅ Success with fallback approach")
+                print("✅ Success with fallback approach")
                 return True, tags
             else:
-                print(f"❌ Fallback approach failed - WILL CAUSE SCRIPT TO EXIT")
+                print("❌ Fallback approach failed - WILL CAUSE SCRIPT TO EXIT")
                 return False, tags
         except Exception as fallback_e:
             print(f"💥 Fallback exception: {fallback_e} - WILL CAUSE SCRIPT TO EXIT")
@@ -1637,7 +1635,6 @@ def find_most_relevant_benchmarks(prompt: str, top_k: int = 1, priority: str = "
     Returns:
         List of dictionaries with benchmark info and relevance scores
     """
-    import subprocess
     import json
     
     # Use cached benchmark information (already updated at module load)
@@ -1994,32 +1991,32 @@ def print_priority_summary():
     print(f"📊 Total benchmarks: {total}")
     print()
     
-    print(f"🚀 HIGH PRIORITY (< 13.5s - optimal for agentic use):")
+    print("🚀 HIGH PRIORITY (< 13.5s - optimal for agentic use):")
     print(f"   Count: {priority_counts['high']} ({priority_counts['high']/total*100:.1f}%)")
     high_priority = get_benchmarks_by_priority("high")
     for name in sorted(high_priority.keys()):
         print(f"   • {name}")
     
-    print(f"\n⚡ MEDIUM PRIORITY (13.5-60s - acceptable for agentic use):")
+    print("\n⚡ MEDIUM PRIORITY (13.5-60s - acceptable for agentic use):")
     print(f"   Count: {priority_counts['medium']} ({priority_counts['medium']/total*100:.1f}%)")
     medium_priority = get_benchmarks_by_priority("medium")
     for name in sorted(medium_priority.keys()):
         print(f"   • {name}")
     
-    print(f"\n🐌 LOW PRIORITY (> 60s - deprioritized for agentic use):")
+    print("\n🐌 LOW PRIORITY (> 60s - deprioritized for agentic use):")
     print(f"   Count: {priority_counts['low']} ({priority_counts['low']/total*100:.1f}%)")
     low_priority = get_benchmarks_by_priority("low")
     for name in sorted(low_priority.keys()):
         print(f"   • {name}")
     
     if priority_counts['unknown'] > 0:
-        print(f"\n❓ UNKNOWN PRIORITY:")
+        print("\n❓ UNKNOWN PRIORITY:")
         print(f"   Count: {priority_counts['unknown']}")
     
-    print(f"\n💡 AGENTIC OPTIMIZATION RECOMMENDATIONS:")
-    print(f"   • Prefer HIGH priority benchmarks for quick responses")
-    print(f"   • Use MEDIUM priority benchmarks for balanced evaluation")
-    print(f"   • Avoid LOW priority benchmarks for interactive agentic flows")
+    print("\n💡 AGENTIC OPTIMIZATION RECOMMENDATIONS:")
+    print("   • Prefer HIGH priority benchmarks for quick responses")
+    print("   • Use MEDIUM priority benchmarks for balanced evaluation")
+    print("   • Avoid LOW priority benchmarks for interactive agentic flows")
     print(f"   • HIGH + MEDIUM = {priority_counts['high'] + priority_counts['medium']} benchmarks ({(priority_counts['high'] + priority_counts['medium'])/total*100:.1f}%) suitable for agentic use")
 
 def test_benchmark_matching():
@@ -2125,7 +2122,7 @@ def main():
             else:
                 results["cli_testing"]["failed"].append(benchmark_name)
                 print(f"\n💥 FATAL ERROR: CLI testing failed for {benchmark_name}")
-                print(f"🚨 Script failing hard as requested!")
+                print("🚨 Script failing hard as requested!")
                 print(f"❌ Benchmark: {benchmark_name} ({task_name})")
                 print(f"🏷️  Tags: {', '.join(tags)}")
                 sys.exit(1)
@@ -2133,13 +2130,13 @@ def main():
             results["dataset_creation"]["failed"].append(benchmark_name)
             results["cli_testing"]["failed"].append(benchmark_name)
             print(f"\n💥 FATAL ERROR: Dataset creation failed for {benchmark_name}")
-            print(f"🚨 Script failing hard as requested!")
+            print("🚨 Script failing hard as requested!")
             print(f"❌ Benchmark: {benchmark_name} ({task_name})")
             print(f"🏷️  Tags: {', '.join(tags)}")
             sys.exit(1)
         
         print(f"\n{'='*80}")
-        print(f"📊 CURRENT STATUS")
+        print("📊 CURRENT STATUS")
         print(f"{'='*80}")
         print(f"✅ Dataset creation successful: {len(results['dataset_creation']['successful'])}")
         print(f"❌ Dataset creation failed: {len(results['dataset_creation']['failed'])}")
@@ -2148,14 +2145,14 @@ def main():
         
         # Continue to next benchmark
         print(f"\n✅ Successfully completed testing {benchmark_name}")
-        print(f"🔄 Moving to next benchmark...\n")
+        print("🔄 Moving to next benchmark...\n")
     
     # Print final summary
     print(f"\n{'='*60}")
     print("📊 FINAL SUMMARY")
     print(f"{'='*60}")
     
-    print(f"\n🔍 Dataset Creation Results:")
+    print("\n🔍 Dataset Creation Results:")
     print(f"✅ Successful: {len(results['dataset_creation']['successful'])}")
     for name in results["dataset_creation"]["successful"]:
         tags = results["benchmark_tags"][name]["tags"]
@@ -2166,7 +2163,7 @@ def main():
         tags = results["benchmark_tags"][name]["tags"]
         print(f"  - {name} ({', '.join(tags)})")
     
-    print(f"\n🧪 CLI Testing Results:")
+    print("\n🧪 CLI Testing Results:")
     print(f"✅ Successful: {len(results['cli_testing']['successful'])}")
     for name in results["cli_testing"]["successful"]:
         tags = results["benchmark_tags"][name]["tags"]

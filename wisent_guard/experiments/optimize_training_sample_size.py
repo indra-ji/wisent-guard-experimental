@@ -25,13 +25,11 @@ import os
 import sys
 import subprocess
 import json
-import tempfile
 import argparse
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Any
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Add the parent directory to the path so we can import wisent_guard modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -292,7 +290,7 @@ def evaluate_classifier(model: Model, test_df: pd.DataFrame, classifier_path: st
     elif hasattr(steering_method, 'classifier'):
         classifier = steering_method.classifier
     else:
-        print(f"   ❌ No classifier found in steering method")
+        print("   ❌ No classifier found in steering method")
         return {}
     
     # Collect predictions
@@ -317,7 +315,7 @@ def evaluate_classifier(model: Model, test_df: pd.DataFrame, classifier_path: st
             true_labels.append(true_label)
     
     if not aggregated_scores:
-        print(f"   ❌ No valid predictions")
+        print("   ❌ No valid predictions")
         return {}
     
     # Make predictions based on threshold

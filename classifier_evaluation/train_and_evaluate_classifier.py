@@ -9,14 +9,12 @@ capabilities and code quality detection.
 
 import argparse
 import logging
-import os
 import sys
 import time
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 
 import yaml
-import numpy as np
 import json
 from datasets import load_dataset
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
@@ -242,7 +240,7 @@ def train_and_evaluate_classifier(config_path: str, overrides: Dict[str, Any] = 
     # Ensure we have enough examples for training
     min_examples = 2
     if len(train_positive) < min_examples or len(train_negative) < min_examples:
-        logger.warning(f"Not enough examples for training. Using synthetic fallback.")
+        logger.warning("Not enough examples for training. Using synthetic fallback.")
         train_positive, train_negative, train_task_ids = get_synthetic_fallback_data()
     
     # Limit training examples if specified

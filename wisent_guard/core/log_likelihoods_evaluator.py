@@ -7,7 +7,7 @@ it loads the multiple choice options from lm-eval tasks and runs the classifier
 directly on each choice to evaluate performance against known ground truth.
 """
 
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -86,14 +86,14 @@ class LogLikelihoodsEvaluator:
             
             # For evaluation, use DIRECT_COMPLETION instead of MULTIPLE_CHOICE
             # This creates prompts like "Q" -> "good_resp"/"bad_resp" instead of "Which is better: Q A. bad B. good"
-            logger.info(f"🔍 EVALUATION MODE: Using DIRECT_COMPLETION prompt strategy instead of MULTIPLE_CHOICE")
+            logger.info("🔍 EVALUATION MODE: Using DIRECT_COMPLETION prompt strategy instead of MULTIPLE_CHOICE")
             contrastive_pairs = collector.create_batch_contrastive_pairs(
                 qa_pairs, 
                 prompt_strategy=PromptConstructionStrategy.DIRECT_COMPLETION
             )
             
             if not contrastive_pairs:
-                return self._error_result(f"No contrastive pairs could be created from QA pairs")
+                return self._error_result("No contrastive pairs could be created from QA pairs")
             
             logger.info(f"Created {len(contrastive_pairs)} contrastive pairs")
             
@@ -112,7 +112,7 @@ class LogLikelihoodsEvaluator:
             targeting_strategy = targeting_strategy_mapping.get(token_aggregation, TokenTargetingStrategy.MEAN_POOLING)
             
             logger.info(f"🔍 EVALUATION MODE: Using {targeting_strategy.value} targeting strategy (from token_aggregation: {token_aggregation})")
-            logger.info(f"🎯 ACTIVATION COLLECTION PARAMS:")
+            logger.info("🎯 ACTIVATION COLLECTION PARAMS:")
             logger.info(f"   • Layer: {layer}")
             logger.info(f"   • Device: {evaluation_model.device}")
             logger.info(f"   • Token targeting: {targeting_strategy.value}")
@@ -126,14 +126,14 @@ class LogLikelihoodsEvaluator:
             )
             
             if not processed_pairs:
-                return self._error_result(f"No activations could be extracted from contrastive pairs")
+                return self._error_result("No activations could be extracted from contrastive pairs")
             
             logger.info(f"Extracted activations from {len(processed_pairs)} pairs")
             
             # Debug: Show where activations are collected from
             if processed_pairs:
                 sample_pair = processed_pairs[0]
-                logger.info(f"📍 DETAILED ACTIVATION COLLECTION ANALYSIS:")
+                logger.info("📍 DETAILED ACTIVATION COLLECTION ANALYSIS:")
                 logger.info(f"   🔧 Sample pair type: {type(sample_pair).__name__}")
                 logger.info(f"   🔧 Pair attributes: {[attr for attr in dir(sample_pair) if not attr.startswith('_')][:8]}...")
                 
@@ -154,7 +154,7 @@ class LogLikelihoodsEvaluator:
                     logger.info(f"   ❌ Negative response: {sample_pair.negative_response[:50]}...")
                     logger.info(f"   🔍 Token targeting used: {targeting_strategy.value} (from CLI token_aggregation: {token_aggregation})")
                 else:
-                    logger.info(f"   📍 ACTIVATION COLLECTION: Unknown format - investigating...")
+                    logger.info("   📍 ACTIVATION COLLECTION: Unknown format - investigating...")
                     logger.info(f"   🔧 All attributes: {[attr for attr in dir(sample_pair) if not attr.startswith('__')]}")
             
             # Map token aggregation to activation method
@@ -232,7 +232,7 @@ class LogLikelihoodsEvaluator:
             
             # Create Activations objects for proper feature extraction
             from .layer import Layer
-            from .activations import Activations, ActivationAggregationMethod
+            from .activations import Activations
             
             layer_obj = Layer(index=15, type="transformer")
             
@@ -264,9 +264,9 @@ class LogLikelihoodsEvaluator:
             classifier_correct = positive_prediction < negative_prediction
             
             # Enhanced logging to show classifier vs normal predictions
-            logger.info(f"📋 Sample Evaluation:")
+            logger.info("📋 Sample Evaluation:")
             logger.info(f"   🔸 Question: {qa_pair['question'][:100]}...")
-            logger.info(f"   🧠 CLASSIFIER PREDICTION:")
+            logger.info("   🧠 CLASSIFIER PREDICTION:")
             logger.info(f"      ✅ Correct answer score: {float(positive_prediction):.3f} (lower = more truthful)")
             logger.info(f"      ❌ Incorrect answer score: {float(negative_prediction):.3f} (higher = less truthful)")
             logger.info(f"      🎯 Classifier judgment: {'CORRECT' if classifier_correct else 'INCORRECT'} (positive {'<' if classifier_correct else '>='} negative)")

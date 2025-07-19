@@ -18,9 +18,8 @@ import os
 import numpy as np
 from datetime import datetime
 from typing import Dict, List, Tuple, Optional, Any, Union
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
 
 from .model_config_manager import ModelConfigManager
 
@@ -269,7 +268,7 @@ class SteeringOptimizer:
             for layer in layers_to_test:
                 for strength in strength_range:
                     if time.time() - start_time > max_time_minutes * 60:
-                        logger.warning(f"⏰ Time limit reached, stopping optimization")
+                        logger.warning("⏰ Time limit reached, stopping optimization")
                         break
                         
                     try:
@@ -442,8 +441,6 @@ class SteeringOptimizer:
         logger.info(f"   Strength range: {strength_range}, Steps: {strength_steps}")
         
         # Load steering parameters from config
-        import json
-        import os
         config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'steering_optimization_parameters.json')
         if os.path.exists(config_path):
             with open(config_path, 'r') as f:
@@ -462,7 +459,6 @@ class SteeringOptimizer:
             strength_range = (min(default_strengths), max(default_strengths))
         
         # Generate strength values to test
-        import numpy as np
         strengths = np.linspace(strength_range[0], strength_range[1], strength_steps)
         
         # Get method-specific parameters from config if not provided
@@ -548,7 +544,7 @@ class SteeringOptimizer:
                         if isinstance(result, dict):
                             logger.debug(f"   Result keys: {list(result.keys())}")
                             if 'evaluation_results' in result:
-                                logger.debug(f"   Direct evaluation_results found")
+                                logger.debug("   Direct evaluation_results found")
                     
                     if baseline_likes and steered_likes:
                         # Filter out inf and nan values
@@ -742,7 +738,7 @@ class SteeringOptimizer:
         Returns:
             SteeringOptimizationSummary with comprehensive results
         """
-        logger.info(f"🚀 Starting comprehensive steering optimization")
+        logger.info("🚀 Starting comprehensive steering optimization")
         
         if tasks is None:
             # Use tasks that were successfully optimized for classification
@@ -759,7 +755,7 @@ class SteeringOptimizer:
             methods = [SteeringMethod.CAA, SteeringMethod.HPR]  # Start with simpler methods
         
         logger.info(f"📊 Tasks: {tasks}")
-        logger.info(f"🔧 Methods: [methods.value for method in methods]")
+        logger.info("🔧 Methods: [methods.value for method in methods]")
         
         # TODO: Implement comprehensive optimization loop
         # This should:
@@ -1155,7 +1151,7 @@ def run_auto_steering_optimization(
         strength_range = [0.5, 1.0, 1.5, 2.0]
     
     if verbose:
-        logger.info(f"🚀 Starting automatic steering optimization")
+        logger.info("🚀 Starting automatic steering optimization")
         logger.info(f"   Model: {model_name}")
         logger.info(f"   Tasks: {tasks_to_optimize}")
         logger.info(f"   Method configurations: {[cfg.name for cfg in method_configs]}")
@@ -1238,7 +1234,7 @@ def run_auto_steering_optimization(
         results['config_path'] = config_manager._get_config_path(model_name)
         
         if verbose:
-            logger.info(f"\n✅ Steering optimization complete!")
+            logger.info("\n✅ Steering optimization complete!")
             logger.info(f"   Configuration saved to: {results['config_path']}")
             logger.info(f"   Overall best: {results['overall_best']['best_method']} "
                        f"L{results['overall_best']['best_layer']} "

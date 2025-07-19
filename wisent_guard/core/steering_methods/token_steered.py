@@ -6,7 +6,7 @@ during generation, with various application strategies.
 """
 
 from enum import Enum
-from typing import Dict, Any, Optional, Union, List, Callable
+from typing import Dict, Any, Optional, Callable
 import torch
 import math
 

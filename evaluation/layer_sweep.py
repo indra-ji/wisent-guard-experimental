@@ -14,10 +14,8 @@ import re
 import os
 import json
 import argparse
-import sys
 import subprocess
 import torch
-from sklearn.metrics import precision_recall_curve, roc_curve, auc, f1_score, accuracy_score
 from collections import defaultdict
 import warnings
 

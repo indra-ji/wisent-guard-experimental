@@ -4,7 +4,7 @@ Activation collector for capturing model activations during steering vector trai
 
 import torch
 import logging
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any
 from dataclasses import dataclass
 from transformers import AutoModel, AutoTokenizer
 from ..data_loaders.steering_data_extractor import ContrastivePair

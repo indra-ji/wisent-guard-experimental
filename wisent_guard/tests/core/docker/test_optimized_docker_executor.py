@@ -1,8 +1,7 @@
 """Tests for the optimized Docker executor (Level 1 optimizations)."""
 
 import pytest
-import time
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from wisent_guard.core.docker.optimized_docker_executor import (
     OptimizedDockerExecutor,
     TaskComplexity,

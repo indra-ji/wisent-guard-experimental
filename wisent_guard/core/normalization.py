@@ -14,9 +14,8 @@ consistent steering strength across different behaviors.
 
 import torch
 import numpy as np
-from typing import Dict, List, Optional, Tuple, Any, Union
+from typing import Dict, List, Optional, Tuple, Any
 from enum import Enum
-from pathlib import Path
 import os
 
 class VectorNormalizationMethod(Enum):

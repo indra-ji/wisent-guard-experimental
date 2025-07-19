@@ -16,10 +16,7 @@ import argparse
 import torch
 import json
 import os
-import datetime
 import pandas as pd
-import numpy as np
-from typing import List, Dict, Any
 import sys
 import csv
 
@@ -368,7 +365,7 @@ def main():
         if device == "mps" and load_kwargs["device_map"] == "cpu":
             model = model.to(device)
             
-        print(f"Model loaded successfully")
+        print("Model loaded successfully")
         
         # Get total number of layers
         if hasattr(model, 'model') and hasattr(model.model, 'layers'):
@@ -383,7 +380,7 @@ def main():
         return
     
     # Load TruthfulQA data
-    print(f"\nLoading TruthfulQA data...")
+    print("\nLoading TruthfulQA data...")
     train_df = load_truthfulqa_data(args.train_data)
     eval_df = load_truthfulqa_data(args.eval_data)
     
@@ -409,7 +406,7 @@ def main():
     print(f"\nSuccessfully trained classifiers for {len(classifiers)} layers: {sorted(classifiers.keys())}")
     
     # Initialize guard for blocked method
-    print(f"\nInitializing guard for blocked method...")
+    print("\nInitializing guard for blocked method...")
     guard = ActivationGuard(
         model=model,
         tokenizer=tokenizer,

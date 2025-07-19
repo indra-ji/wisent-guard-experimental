@@ -12,8 +12,6 @@ Usage:
 """
 
 import os
-import json
-import subprocess
 from pathlib import Path
 
 from wisent_guard.core.pipelines import ExperimentRunner
@@ -53,7 +51,7 @@ def main():
         runner = ExperimentRunner(experiment_config)
         results = runner.run_experiment()
         
-        print(f"✅ Training completed!")
+        print("✅ Training completed!")
         print(f"   Experiment saved to: {experiment_config.output_directory}")
         print(f"   Steering vectors: {len(results.training_results.steering_vectors)} vectors")
         print(f"   Training time: {results.training_results.training_time:.2f} seconds")

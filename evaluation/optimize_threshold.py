@@ -12,7 +12,7 @@ import re
 import os
 import json
 import argparse
-from sklearn.metrics import precision_recall_curve, roc_curve, auc, f1_score, accuracy_score
+from sklearn.metrics import precision_recall_curve, roc_curve, auc
 import warnings
 
 # Ignore specific warnings
@@ -483,7 +483,7 @@ def main():
     
     print("\n===== Optimization Complete =====")
     print(f"Optimal threshold {results['threshold']:.4f} selected based on {args.metric}.")
-    print(f"This threshold achieves:")
+    print("This threshold achieves:")
     print(f"- {results['true_positives']} hallucinations caught")
     print(f"- {results['false_positives']} correct responses incorrectly blocked")
     print(f"- {results['false_negatives']} hallucinations missed")

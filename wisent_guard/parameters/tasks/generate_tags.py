@@ -11,8 +11,7 @@ import json
 import sys
 import os
 import random
-from typing import Dict, List, Any, Optional, Set
-import subprocess
+from typing import Dict, List, Any, Set
 import re
 
 # Set environment variables to automatically trust remote code for datasets
@@ -318,7 +317,7 @@ def parse_llama_response(response: str) -> Dict[str, Any]:
     
     # Final safety check - if we still have no tags, try a more aggressive fallback
     if not result["top_tags"]:
-        print(f"⚠️  No tags found with standard parsing, trying aggressive fallback...")
+        print("⚠️  No tags found with standard parsing, trying aggressive fallback...")
         print(f"Raw response (full): {response}")
         
         # Try to extract ANY words that match our allowed tags
@@ -338,7 +337,7 @@ def parse_llama_response(response: str) -> Dict[str, Any]:
             result["cognitive_traits"] = [(tag, 5.0) for tag in unique_tags[:3]]
             print(f"✅ Fallback found tags: {unique_tags[:3]}")
         else:
-            print(f"❌ Even fallback parsing failed!")
+            print("❌ Even fallback parsing failed!")
     
     return result
 
@@ -507,7 +506,7 @@ def try_related_tasks(task_name: str, num_samples: int = 5) -> Dict[str, Any]:
     related_tasks = find_related_tasks(task_name)
     
     if not related_tasks:
-        print(f"   ℹ️  No related tasks found - keeping existing tags")
+        print("   ℹ️  No related tasks found - keeping existing tags")
         return {
             "task_name": task_name,
             "error": f"Task '{task_name}' failed to load and no related tasks found",
@@ -545,7 +544,7 @@ def try_related_tasks(task_name: str, num_samples: int = 5) -> Dict[str, Any]:
                 "generated_tags": analysis.get("top_tags", []),
                 "all_tags_with_scores": analysis.get("cognitive_traits", []),
                 "analysis": {
-                    "method": f"llama_3.1b_instruct_via_related_task",
+                    "method": "llama_3.1b_instruct_via_related_task",
                     "related_task_used": random_task,
                     "samples_analyzed": task_samples['sampled_docs'],
                     "total_samples": task_samples['total_docs'],
@@ -588,7 +587,7 @@ def generate_cognitive_tags(task_name: str, num_samples: int = 5) -> Dict[str, A
         skip_reason = task_samples.get("skip_reason", "")
         
         if "not found" in error_msg.lower():
-            print(f"   ⚠️  Task not found directly, trying related tasks...")
+            print("   ⚠️  Task not found directly, trying related tasks...")
             return try_related_tasks(task_name, num_samples)
         else:
             # Return error - the aggressive search should have found alternatives
@@ -638,13 +637,13 @@ def test_llama_analysis(task_name: str = "truthfulqa_mc1"):
     
     # Show all tags with scores if available
     if result.get('all_tags_with_scores'):
-        print(f"\n📊 All Tags with Relevance Scores:")
+        print("\n📊 All Tags with Relevance Scores:")
         for tag, score in result['all_tags_with_scores']:
             print(f"   {tag}: {score}")
     
     # Only show full response if requested (for debugging)
     if len(sys.argv) > 3 and sys.argv[3] == "verbose":
-        print(f"\n🦙 LLAMA RESPONSE:")
+        print("\n🦙 LLAMA RESPONSE:")
         print("-" * 40)
         print(result['llama_response'][:500] + "..." if len(result['llama_response']) > 500 else result['llama_response'])
     

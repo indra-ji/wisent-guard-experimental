@@ -107,7 +107,7 @@ def get_benchmark_tags_with_llama(task_name: str, readme_content: str = "") -> L
         from transformers import pipeline
         import torch
         
-        print(f"   🔄 Loading Llama-3.1-8B-Instruct pipeline...")
+        print("   🔄 Loading Llama-3.1-8B-Instruct pipeline...")
         
         # Check device availability like in generate_tags.py
         if torch.backends.mps.is_available():
@@ -133,7 +133,7 @@ def get_benchmark_tags_with_llama(task_name: str, readme_content: str = "") -> L
             pad_token_id=50256
         )
         
-        print(f"   ✅ Successfully loaded Llama-3.1-8B-Instruct pipeline")
+        print("   ✅ Successfully loaded Llama-3.1-8B-Instruct pipeline")
         
         # Create a focused prompt for tag determination
         description = readme_content[:1500] if readme_content else f"A benchmark called '{task_name}' for evaluating language models."
@@ -205,7 +205,7 @@ You are an expert in AI evaluation benchmarks analyzing benchmark tasks to deter
         
     except Exception as e:
         print(f"   ❌ Error using LLM: {e}")
-        print(f"   🔄 Falling back to basic analysis...")
+        print("   🔄 Falling back to basic analysis...")
         
         # Fallback to basic content analysis
         if readme_content:
@@ -253,7 +253,6 @@ def get_benchmark_groups_from_readme(task_name: str) -> Dict[str, Any]:
         Dictionary with group names and LLM-determined tags
     """
     import requests
-    import re
     
     # Map common task names to their directory names in lm-eval-harness
     task_dir_map = {
@@ -437,7 +436,7 @@ def get_samples_from_group_task(group_name: str, subtasks: List[str], num_sample
                             sample["correct_choice_index"] = None
                     else:
                         sample["format"] = "open_ended"
-                except Exception as e:
+                except Exception:
                     sample["choices"] = []
                     sample["format"] = "unknown"
                 
@@ -514,7 +513,7 @@ def get_task_samples_for_analysis(task_name: str, num_samples: int = 5) -> Dict[
                 
         except Exception as e:
             # Step 2: Try as group task (different API)
-            print(f"⚠️  Individual task failed, trying as group task...")
+            print("⚠️  Individual task failed, trying as group task...")
             try:
                 # Try to get it as a group that might expand to more tasks
                 subtasks = expand_group_task(task_name, evaluator.get_task_dict)
@@ -526,7 +525,7 @@ def get_task_samples_for_analysis(task_name: str, num_samples: int = 5) -> Dict[
                     
             except Exception as e2:
                 # Step 3: Try as group of groups (large size)
-                print(f"⚠️  Group task failed, trying as large group...")
+                print("⚠️  Group task failed, trying as large group...")
                 try:
                     # For very large groups, try different expansion methods
                     from lm_eval.tasks import TaskManager
@@ -536,7 +535,7 @@ def get_task_samples_for_analysis(task_name: str, num_samples: int = 5) -> Dict[
                     # Check if it's in the groups registry
                     all_groups = getattr(tm, 'all_groups', set())
                     if task_name in all_groups:
-                        print(f"✅ Found in groups registry, attempting large expansion...")
+                        print("✅ Found in groups registry, attempting large expansion...")
                         # Try to expand this large group
                         expanded_dict = evaluator.get_task_dict([task_name])
                         if expanded_dict:
@@ -794,7 +793,7 @@ def load_lm_eval():
         from lm_eval.tasks import get_task_dict
         return get_task_dict, None  # Don't need registry, will use subprocess
     except ImportError as e:
-        print(f"Error: lm-evaluation-harness is required. Install with: pip install lm-eval")
+        print("Error: lm-evaluation-harness is required. Install with: pip install lm-eval")
         print(f"Import error: {e}")
         sys.exit(1)
 
@@ -1197,7 +1196,7 @@ def get_relevant_benchmarks_for_prompt(prompt: str, max_benchmarks: int = 1, exi
         from transformers import pipeline
         import torch
         
-        print(f"   🔄 Loading Llama-3.1-8B-Instruct pipeline...")
+        print("   🔄 Loading Llama-3.1-8B-Instruct pipeline...")
         
         # Check device availability
         if torch.backends.mps.is_available():
@@ -1223,7 +1222,7 @@ def get_relevant_benchmarks_for_prompt(prompt: str, max_benchmarks: int = 1, exi
             pad_token_id=50256
         )
         
-        print(f"   ✅ Successfully loaded Llama-3.1-8B-Instruct pipeline")
+        print("   ✅ Successfully loaded Llama-3.1-8B-Instruct pipeline")
         
         # Create analysis prompt with loading time and time budget information
         benchmark_list_with_timing = []
@@ -1360,7 +1359,7 @@ You are an expert in AI evaluation benchmarks. Your task is to analyze prompts a
                     
                     relevant_benchmarks.append({
                         'benchmark': fallback,
-                        'explanation': f"General purpose benchmark suitable for testing various prompts",
+                        'explanation': "General purpose benchmark suitable for testing various prompts",
                         'relevance_score': len(relevant_benchmarks) + 1,
                         'priority': fallback_priority,
                         'loading_time': fallback_loading_time
@@ -1382,7 +1381,7 @@ You are an expert in AI evaluation benchmarks. Your task is to analyze prompts a
         
     except Exception as e:
         print(f"   ❌ Error using LLM: {e}")
-        print(f"   🔄 Falling back to basic analysis...")
+        print("   🔄 Falling back to basic analysis...")
         
         # Fallback to basic keyword matching
         prompt_lower = prompt.lower()
@@ -1427,7 +1426,7 @@ You are an expert in AI evaluation benchmarks. Your task is to analyze prompts a
 
 def test_prompt_benchmark_matching(test_prompt: str = "I like food"):
     """Test the prompt-to-benchmark matching function."""
-    print(f"🧪 Testing prompt-to-benchmark matching")
+    print("🧪 Testing prompt-to-benchmark matching")
     print(f"Test prompt: '{test_prompt}'")
     print("=" * 50)
     
@@ -1464,7 +1463,7 @@ def test_sample_retrieval(task_name: str = "truthfulqa_mc1"):
     print(f"🎯 Sampled documents: {result['sampled_docs']}")
     print(f"🔧 Output type: {result['output_type']}")
     
-    print(f"\n--- Sample Questions ---")
+    print("\n--- Sample Questions ---")
     for i, sample in enumerate(result['samples']):
         print(f"\n📋 Sample {sample['sample_id']}:")
         question = sample.get('question', 'No question available')
@@ -1477,7 +1476,7 @@ def test_sample_retrieval(task_name: str = "truthfulqa_mc1"):
         print(f"📐 Format: {format_type}")
         
         if sample.get('choices'):
-            print(f"🔤 Choices:")
+            print("🔤 Choices:")
             for j, choice in enumerate(sample['choices']):
                 marker = "👉" if j == sample.get('correct_choice_index') else "  "
                 print(f"  {marker} {j}: {choice}")
@@ -1485,7 +1484,7 @@ def test_sample_retrieval(task_name: str = "truthfulqa_mc1"):
         if sample.get('additional_info'):
             print(f"ℹ️  Additional info: {list(sample['additional_info'].keys())}")
     
-    print(f"\n=== Analysis Summary ===")
+    print("\n=== Analysis Summary ===")
     print("Based on these samples, an AI could analyze:")
     print("- Question format and complexity")
     print("- Type of reasoning required")
@@ -1534,12 +1533,12 @@ def main():
     # Check for test mode
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         task_name = sys.argv[2] if len(sys.argv) > 2 else "truthfulqa_mc1"
-        print(f"🧪 Running in TEST MODE")
+        print("🧪 Running in TEST MODE")
         success = test_sample_retrieval(task_name)
         if success:
-            print(f"\n✅ Test completed successfully!")
+            print("\n✅ Test completed successfully!")
         else:
-            print(f"\n❌ Test failed!")
+            print("\n❌ Test failed!")
         return
     
     print("Loading lm_eval library...")
@@ -1557,7 +1556,7 @@ def main():
         # Extract just the task names from the formatted output
         task_names = []
         for line in all_tasks_output.split('\n'):
-            if '|' in line and not line.startswith('|---') and not 'Group' in line and not 'Config Location' in line:
+            if '|' in line and not line.startswith('|---') and 'Group' not in line and 'Config Location' not in line:
                 parts = line.split('|')
                 if len(parts) >= 2:
                     task_name = parts[1].strip()
@@ -1588,7 +1587,7 @@ def main():
     print(f"✓ Saved {len(available_tasks)} task names to {tasks_file}")
     
     # PHASE 2: Populate details for first 2 tasks (for testing)
-    print(f"\nPhase 2: Populating detailed information for 2 test tasks...")
+    print("\nPhase 2: Populating detailed information for 2 test tasks...")
     
     # Use known individual tasks that actually exist
     tasks_to_populate = ["truthfulqa_mc1", "hellaswag"]

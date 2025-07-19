@@ -1,6 +1,5 @@
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-import re
 import asyncio
 import time
 import sys
@@ -113,7 +112,7 @@ class AgentClassifierDecisionSystem:
         Returns:
             Analysis with relevant benchmarks for direct use
         """
-        print(f"🔍 Analyzing task requirements for prompt...")
+        print("🔍 Analyzing task requirements for prompt...")
         
         # Get relevant benchmarks for the prompt using priority-aware selection
         existing_model = getattr(self.marketplace, 'model', None)
@@ -489,7 +488,7 @@ class AgentClassifierDecisionSystem:
                 benchmark_name=benchmark_name,
                 action="use_existing",
                 selected_classifier=best_existing,
-                reasoning=f"Using existing despite low quality - time/budget constraints",
+                reasoning="Using existing despite low quality - time/budget constraints",
                 confidence=existing_quality * 0.7  # Penalty for low quality
             )
         
@@ -621,7 +620,7 @@ class AgentClassifierDecisionSystem:
         Returns:
             List of classifier configurations ready for use
         """
-        print(f"🧠 Smart classifier selection for task...")
+        print("🧠 Smart classifier selection for task...")
         
         # Step 1: Analyze task requirements
         task_analysis = self.analyze_task_requirements(prompt, context)

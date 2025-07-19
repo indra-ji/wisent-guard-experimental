@@ -10,7 +10,6 @@ A model that can autonomously use wisent-guard capabilities on itself:
 """
 
 import asyncio
-import os
 from typing import Dict, Any, Optional, List
 
 from .model import Model
@@ -129,7 +128,7 @@ class AutonomousAgent:
         self.analysis_history: List[AnalysisResult] = []
         
         print(f"🤖 Autonomous Agent initialized with {model_name}")
-        print(f"   🎯 Using marketplace-based classifier selection")
+        print("   🎯 Using marketplace-based classifier selection")
         print(f"   🎛️ Steering: {steering_method} (strength: {steering_strength})")
         if steering_mode:
             print(f"   🔧 Steering mode enabled with {normalization_method} normalization")
@@ -467,7 +466,6 @@ class AutonomousAgent:
         Returns:
             ClassifierParams with model-determined parameters
         """
-        from .agent.diagnose.agent_classifier_decision import ClassifierParams
         
         parameter_prompt = f"""
         Analyze this prompt and determine optimal classifier parameters:
@@ -581,7 +579,6 @@ class AutonomousAgent:
         Returns:
             SteeringParams with model-determined parameters
         """
-        from .agent.diagnose.agent_classifier_decision import SteeringParams
         
         steering_prompt = f"""
         Determine optimal steering parameters for improving this response:
@@ -689,7 +686,7 @@ class AutonomousAgent:
             return stored_params
         
         # Step 2: Fall back to model determination
-        print(f"   🧠 No stored parameters found, using model determination...")
+        print("   🧠 No stored parameters found, using model determination...")
         fresh_params = await self._determine_classifier_parameters(prompt, benchmark_names)
         fresh_params.reasoning = f"Model-determined: {fresh_params.reasoning}"
         
@@ -721,7 +718,7 @@ class AutonomousAgent:
             return stored_params
         
         # Step 2: Fall back to model determination
-        print(f"   🧠 No stored steering parameters found, using model determination...")
+        print("   🧠 No stored steering parameters found, using model determination...")
         fresh_params = await self._determine_steering_parameters(prompt, current_quality, attempt_number)
         fresh_params.reasoning = f"Model-determined: {fresh_params.reasoning}"
         
@@ -840,7 +837,7 @@ class AutonomousAgent:
             
             prompt_type = self._classify_prompt_type(prompt)
             if not prompt_type:
-                print(f"   💾 Could not classify prompt for storage")
+                print("   💾 Could not classify prompt for storage")
                 return
             
             print(f"   💾 Storing successful parameters for '{prompt_type}' (quality: {final_quality:.3f})")
@@ -848,7 +845,7 @@ class AutonomousAgent:
             # This would update the parameter file
             # Implementation would involve updating the JSON file with new averages
             # For now, just log that we would store it
-            print(f"   📝 Would update parameter file with successful combination")
+            print("   📝 Would update parameter file with successful combination")
             
         except Exception as e:
             print(f"   ⚠️ Failed to store parameters: {e}")
@@ -875,7 +872,7 @@ class AutonomousAgent:
             QualityControlledResponse with final response and complete metadata
         """
         from .agent.diagnose.agent_classifier_decision import QualityControlledResponse
-        from .agent.timeout import timeout_context, TimeoutError, AsyncTimeoutChecker
+        from .agent.timeout import timeout_context, TimeoutError
         import time
         
         start_time = time.time()
@@ -1000,7 +997,7 @@ class AutonomousAgent:
             
             # Break immediately if time is up
             if timeout_mgr.get_remaining_time() <= 0:
-                print(f"   ⏰ TIME UP! Breaking immediately.")
+                print("   ⏰ TIME UP! Breaking immediately.")
                 break
             
             # Evaluate current quality
@@ -1072,7 +1069,7 @@ class AutonomousAgent:
                 prompt, classifier_params, steering_params_used, final_quality.score
             )
         
-        print(f"\n✅ QUALITY CONTROL COMPLETE")
+        print("\n✅ QUALITY CONTROL COMPLETE")
         print(f"   📝 Final response: {result.response_text[:100]}...")
         print(f"   📊 Final quality: {result.final_quality_score:.3f}")
         print(f"   🔄 Attempts: {result.attempts_needed}")
@@ -1191,7 +1188,7 @@ async def demo_autonomous_agent():
                 time_budget_minutes=2.0  # Very short for demo
             )
             
-            print(f"\n📋 RESULT SUMMARY:")
+            print("\n📋 RESULT SUMMARY:")
             print(f"   Final Response: {result['final_response'][:100]}...")
             print(f"   Attempts: {result['attempts']}")
             print(f"   Improvements: {len(result['improvement_chain'])}")
@@ -1199,7 +1196,7 @@ async def demo_autonomous_agent():
             print(f"   Classifier Types: {result['classifier_info']['types']}")
         
         # Show overall performance
-        print(f"\n📊 OVERALL PERFORMANCE:")
+        print("\n📊 OVERALL PERFORMANCE:")
         summary = agent.get_performance_summary()
         print(f"   Total Improvements: {summary.get('total_improvements_attempted', 0)}")
         print(f"   Success Rate: {summary.get('success_rate', 0):.2%}")

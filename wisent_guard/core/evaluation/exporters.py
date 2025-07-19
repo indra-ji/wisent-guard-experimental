@@ -3,16 +3,14 @@ Model exporters for preparing models for evaluation in different benchmark forma
 """
 
 import os
-import shutil
 import json
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 from pathlib import Path
 from datetime import datetime
 import torch
 
-from ..models import SteeringCompatibleModel, create_steering_compatible_model
-from ..pipelines import ExperimentRunner
+from ..models import create_steering_compatible_model
 
 logger = logging.getLogger(__name__)
 

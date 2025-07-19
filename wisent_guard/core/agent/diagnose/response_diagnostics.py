@@ -9,8 +9,7 @@ This module handles:
 """
 
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
-import torch
+from typing import List, Dict, Any
 from ...classifier import Classifier
 from ...model import Model
 from ...layer import Layer
@@ -66,7 +65,7 @@ class ResponseDiagnostics:
                 
             except Exception as e:
                 print(f"⚠️ Failed to load classifier {config['path']}: {e}")
-                print(f"   Skipping this classifier and continuing...")
+                print("   Skipping this classifier and continuing...")
                 continue
         
         if not self.classifiers:

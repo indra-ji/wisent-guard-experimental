@@ -4,7 +4,7 @@ Clean implementation using enhanced core primitives.
 """
 
 import logging
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional
 from pathlib import Path
 
 from .core import ContrastivePairSet, Activations, Model, Layer

@@ -9,7 +9,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 from datetime import datetime
 
 # Import the benchmark configuration and timing functions
@@ -26,7 +26,7 @@ def test_failed_benchmark(benchmark_name: str, benchmark_config: Dict) -> Dict:
     trust_remote_code = benchmark_config.get("trust_remote_code", False)
     
     if trust_remote_code:
-        print(f"   🔐 Using trust_remote_code=True")
+        print("   🔐 Using trust_remote_code=True")
     
     start_time = time.time()
     
@@ -161,7 +161,7 @@ def main():
         }
     ]
     
-    print(f"🚀 Testing remaining failed benchmarks...")
+    print("🚀 Testing remaining failed benchmarks...")
     
     # Test the remaining benchmarks (skip narrativeqa for now due to size)
     remaining_benchmarks = ["scrolls", "mctaco", "wmt", "babi"]
@@ -293,13 +293,13 @@ def main():
     with open(output_file, 'w') as f:
         json.dump(updated_results, f, indent=2)
     
-    print(f"\n📊 Final Results Summary:")
+    print("\n📊 Final Results Summary:")
     print(f"   Total benchmarks: {total_benchmarks}")
     print(f"   Successful: {successful_loads} ({success_rate:.1%})")
     print(f"   Failed: {failed_loads}")
     print(f"   Improvement: {successful_loads - original_results['summary']['successful_loads']} benchmarks fixed")
-    print(f"   Fixed benchmarks: math_qa, crows_pairs, hendrycks_ethics, paws_x, mmmlu, pubmedqa")
-    print(f"   Remaining issues: storycloze (manual download), narrativeqa (large dataset)")
+    print("   Fixed benchmarks: math_qa, crows_pairs, hendrycks_ethics, paws_x, mmmlu, pubmedqa")
+    print("   Remaining issues: storycloze (manual download), narrativeqa (large dataset)")
     
     print(f"\n✅ Fix completed! Updated results saved to: {output_file}")
 

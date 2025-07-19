@@ -8,11 +8,9 @@ This service controls how much of each benchmark is downloaded based on the limi
 - Hard errors for unsupported benchmarks, no fallbacks
 """
 
-import os
 import json
 import logging
-import time
-from typing import Dict, Any, List, Optional, Iterator
+from typing import Dict, Any, List, Iterator
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -274,7 +272,7 @@ class ManagedCachedBenchmarks:
         elif hasattr(task, 'training_docs') and task.has_training_docs():
             docs = task.training_docs()
         else:
-            raise BenchmarkError(f"No document source available for task")
+            raise BenchmarkError("No document source available for task")
         
         # Convert to iterator and limit
         doc_iter = iter(docs)

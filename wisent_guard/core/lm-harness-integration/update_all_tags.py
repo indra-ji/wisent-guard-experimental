@@ -3,10 +3,6 @@
 Script to update all benchmark tags in only_benchmarks.py using README-based tag determination.
 """
 
-import os
-import sys
-import json
-from typing import Dict, List
 
 # Import the tag determination function
 from populate_tasks import get_benchmark_tags_with_llama
@@ -75,12 +71,12 @@ def update_benchmark_tags():
             }
             failed_updates += 1
     
-    print(f"\n📊 Update Summary:")
+    print("\n📊 Update Summary:")
     print(f"✅ Successful README updates: {successful_updates}")
     print(f"⚠️  Kept existing/default tags: {failed_updates}")
     
     # Generate the updated CORE_BENCHMARKS dictionary content
-    print(f"\n📝 Generating updated only_benchmarks.py content...")
+    print("\n📝 Generating updated only_benchmarks.py content...")
     
     # Create the new CORE_BENCHMARKS content
     benchmarks_content = "CORE_BENCHMARKS = {\n"
@@ -118,7 +114,7 @@ def update_benchmark_tags():
                 benchmarks_content += f'    "{benchmark_name}": {{\n'
                 benchmarks_content += f'        "task": "{config["task"]}",\n'
                 benchmarks_content += f'        "tags": [{tags_str}]\n'
-                benchmarks_content += f'    }},\n'
+                benchmarks_content += '    },\n'
         benchmarks_content += "\n"
     
     benchmarks_content = benchmarks_content.rstrip(",\n") + "\n}\n"
@@ -133,7 +129,7 @@ def update_benchmark_tags():
     print(f"💾 Updated benchmarks saved to: {output_file}")
     
     # Show some examples
-    print(f"\n📋 Example updates:")
+    print("\n📋 Example updates:")
     for i, (name, config) in enumerate(list(updated_benchmarks.items())[:5]):
         print(f"   {name}: {config['tags']}")
     

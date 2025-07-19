@@ -4,7 +4,7 @@ LM-Eval-Harness Ground Truth Evaluation
 This module provides ground truth evaluation using the lm-eval-harness framework.
 """
 
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -185,7 +185,7 @@ class LMEvalHarnessGroundTruth:
             for response_data in generated_responses:
                 try:
                     # Create layer object first
-                    from .activations import Activations, ActivationAggregationMethod
+                    from .activations import Activations
                     from .layer import Layer
                     
                     layer_obj = Layer(index=layer, type="transformer")
@@ -255,7 +255,7 @@ class LMEvalHarnessGroundTruth:
                         'classifier_truthful': prediction < 0.5  # Lower = more truthful
                     })
                     
-                    logger.info(f"📋 Generated Response Classification:")
+                    logger.info("📋 Generated Response Classification:")
                     logger.info(f"   🔸 Question: {response_data['question'][:100]}...")
                     logger.info(f"   🧠 Generated: {response_data['generated_response'][:100]}...")
                     logger.info(f"   🎯 Classifier score: {prediction:.3f} (lower = more truthful)")
@@ -324,7 +324,7 @@ class LMEvalHarnessGroundTruth:
                         
                         # Extract activations from the text for classifier
                         try:
-                            from .activations import Activations, ActivationAggregationMethod
+                            from .activations import Activations
                             from .layer import Layer
                             
                             layer_obj = Layer(index=layer, type="transformer")
@@ -377,7 +377,7 @@ class LMEvalHarnessGroundTruth:
                         
                         perplexity_results.append(result)
                         
-                        logger.info(f"📋 WikiText Perplexity Analysis:")
+                        logger.info("📋 WikiText Perplexity Analysis:")
                         logger.info(f"   📊 Document {i}: {len(text)} chars")
                         logger.info(f"   🎯 Perplexity: {perplexity:.3f}")
                         if classification_score is not None:
@@ -448,7 +448,7 @@ class LMEvalHarnessGroundTruth:
                         classification_score = None
                         try:
                             # Create layer object first
-                            from .activations import Activations, ActivationAggregationMethod
+                            from .activations import Activations
                             from .layer import Layer
                             
                             layer_obj = Layer(index=layer, type="transformer")
@@ -520,7 +520,7 @@ class LMEvalHarnessGroundTruth:
                         
                         perplexity_results.append(result)
                         
-                        logger.info(f"📋 Perplexity Analysis:")
+                        logger.info("📋 Perplexity Analysis:")
                         logger.info(f"   🔸 Question: {prompt[:100]}...")
                         logger.info(f"   📊 Best choice (lowest perplexity): {best_choice['choice_text'][:100]}...")
                         logger.info(f"   🎯 Perplexity: {best_choice['perplexity']:.3f}")
@@ -553,7 +553,7 @@ class LMEvalHarnessGroundTruth:
                 classifier_scores = [r['classifier_score'] for r in perplexity_results if r['classifier_score'] is not None]
                 avg_classifier_score = sum(classifier_scores) / len(classifier_scores) if classifier_scores else None
             
-            logger.info(f"📊 PERPLEXITY EVALUATION RESULTS:")
+            logger.info("📊 PERPLEXITY EVALUATION RESULTS:")
             logger.info(f"   • Total samples: {total_samples}")
             if task_name == "wikitext":
                 logger.info(f"   • Average perplexity: {avg_perplexity:.3f}")
@@ -740,7 +740,6 @@ class LMEvalHarnessGroundTruth:
     def _evaluate_gsm8k_response(self, generated: str, ground_truth) -> bool:
         """Evaluate GSM8K response using numerical answer extraction."""
         try:
-            import re
             
             # Extract numerical answer from generated response
             # GSM8K answers are typically in format "#### 42" or just the number
@@ -1053,7 +1052,7 @@ class LMEvalHarnessGroundTruth:
             for i, code in enumerate(generated_codes):
                 try:
                     # Create layer object
-                    from .activations import Activations, ActivationAggregationMethod
+                    from .activations import Activations
                     from .layer import Layer
                     
                     layer_obj = Layer(index=layer, type="transformer")

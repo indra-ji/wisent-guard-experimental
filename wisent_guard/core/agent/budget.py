@@ -5,11 +5,9 @@ This module provides utilities for managing time budgets, resource allocation,
 and optimizing task execution within specified constraints.
 """
 
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from enum import Enum
-import time
-import math
 
 
 class ResourceType(Enum):
@@ -456,7 +454,7 @@ def optimize_benchmarks_for_budget(task_candidates: List[str],
         
     except Exception as e:
         print(f"   ⚠️ Priority-aware budget optimization failed: {e}")
-        print(f"   🔄 Falling back to basic budget optimization...")
+        print("   🔄 Falling back to basic budget optimization...")
         return optimize_tasks_for_budget(task_candidates, time_budget_minutes, max_tasks)
 
 
@@ -507,7 +505,7 @@ def run_device_benchmark(force_rerun: bool = False) -> None:
     print(f"Classifier Training: {benchmark.classifier_training_seconds_per_100_samples:.1f}s per 100 samples")
     print(f"Steering: {benchmark.steering_seconds_per_example:.1f}s per example")
     print(f"Data Generation: {benchmark.data_generation_seconds_per_example:.1f}s per example")
-    print(f"\nResults saved to: device_benchmarks.json")
+    print("\nResults saved to: device_benchmarks.json")
     
     # Show some example estimates
     print("\n📊 Example Time Estimates:")
@@ -543,7 +541,6 @@ def estimate_task_time_direct(task_type: str, quantity: int = 1) -> float:
 def main():
     """CLI entry point for budget management and benchmarking."""
     import argparse
-    import sys
     
     parser = argparse.ArgumentParser(
         description="wisent-guard budget management and device benchmarking"
@@ -615,7 +612,7 @@ def main():
             
             total_time = max_tasks * task_time
             
-            print(f"💰 Budget Analysis:")
+            print("💰 Budget Analysis:")
             print(f"Time budget: {args.time_minutes:.1f} minutes ({args.time_minutes * 60:.0f} seconds)")
             print(f"Task type: {args.task_type} (mapped to {benchmark_type})")
             print(f"Time per task: {task_time:.2f} seconds")

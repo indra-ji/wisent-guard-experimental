@@ -7,7 +7,6 @@ don't exceed their allocated time budgets.
 
 import asyncio
 import time
-from typing import Optional, Any
 from contextlib import asynccontextmanager
 
 

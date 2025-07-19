@@ -1,6 +1,6 @@
 import logging
 import itertools
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, List, Any
 from dataclasses import dataclass, field
 import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
@@ -192,7 +192,7 @@ class HyperparameterOptimizer:
                 print(f"   • Using all layers for optimization: {layer_range[0]}-{layer_range[-1]}")
         
         if verbose:
-            print(f"\n🔍 Starting hyperparameter optimization...")
+            print("\n🔍 Starting hyperparameter optimization...")
             print(f"   • Layers to test: {len(layer_range)} (range: {layer_range[0]}-{layer_range[-1]})")
             print(f"   • Aggregation methods: {len(self.config.aggregation_methods)}")
             print(f"   • Thresholds: {len(self.config.threshold_range)}")
@@ -278,7 +278,7 @@ class HyperparameterOptimizer:
         )
         
         if verbose:
-            print(f"\n✅ Optimization complete!")
+            print("\n✅ Optimization complete!")
             print(f"   • Best layer: {optimization_result.best_layer}")
             print(f"   • Best aggregation: {optimization_result.best_aggregation}")
             print(f"   • Best threshold: {optimization_result.best_threshold:.2f}")

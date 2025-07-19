@@ -235,7 +235,7 @@ def train_classifier_detector(model, tokenizer, training_pairs, args):
         print(f"Processing pair {i+1}/{len(training_pairs)}...")
         
         # Process bad code example
-        print(f"  - Processing bad code example...")
+        print("  - Processing bad code example...")
         temp_guard.monitor.reset()
         success = temp_guard._prepare_activations(pair["bad_code"])
         if success:
@@ -250,14 +250,14 @@ def train_classifier_detector(model, tokenizer, training_pairs, args):
                     "token_text": "bad_code",
                     "is_harmful": True  # Keep this as True for compatibility with API
                 })
-                print(f"    ✓ Successfully collected bad code activation")
+                print("    ✓ Successfully collected bad code activation")
             else:
                 print(f"    ✗ Layer {layer} not found in activations")
         else:
-            print(f"    ✗ Failed to prepare activations for bad code example")
+            print("    ✗ Failed to prepare activations for bad code example")
         
         # Process good code example
-        print(f"  - Processing good code example...")
+        print("  - Processing good code example...")
         temp_guard.monitor.reset()
         success = temp_guard._prepare_activations(pair["good_code"])
         if success:
@@ -272,11 +272,11 @@ def train_classifier_detector(model, tokenizer, training_pairs, args):
                     "token_text": "good_code",
                     "is_harmful": False  # Keep this as False for compatibility with API
                 })
-                print(f"    ✓ Successfully collected good code activation")
+                print("    ✓ Successfully collected good code activation")
             else:
                 print(f"    ✗ Layer {layer} not found in activations")
         else:
-            print(f"    ✗ Failed to prepare activations for good code example")
+            print("    ✗ Failed to prepare activations for good code example")
     
     print(f"Collected {len(bad_code_activations)} bad code and {len(good_code_activations)} good code activations")
     
@@ -305,8 +305,8 @@ def train_classifier_detector(model, tokenizer, training_pairs, args):
         print(f"Classifier trained in {train_time:.2f} seconds and saved to {args.classifier_path}")
     except Exception as e:
         print(f"Error training classifier: {e}")
-        print(f"This may be due to device compatibility issues or tensor size problems.")
-        print(f"Try running with --cpu-only flag or reducing the size of the examples.")
+        print("This may be due to device compatibility issues or tensor size problems.")
+        print("Try running with --cpu-only flag or reducing the size of the examples.")
 
 def main():
     """Main function."""

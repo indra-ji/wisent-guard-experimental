@@ -8,8 +8,7 @@ import json
 import os
 import sys
 import time
-from typing import Dict, Any, List
-from pathlib import Path
+from typing import Dict, Any
 
 # Set environment variables to automatically trust remote code for datasets
 os.environ['HF_DATASETS_TRUST_REMOTE_CODE'] = '1'
@@ -111,15 +110,15 @@ def process_all_tasks(start_index: int = 0, save_every: int = 1):
         if "error" in result:
             error_msg = result['error']
             print(f"   ❌ FATAL ERROR: {error_msg}")
-            print(f"   💥 NO TASK SHOULD FAIL - ALL TASKS MUST WORK!")
+            print("   💥 NO TASK SHOULD FAIL - ALL TASKS MUST WORK!")
             raise RuntimeError(f"Task '{task_name}' failed: {error_msg}")
         
         # Get the top 3 tags
         new_tags = result.get('generated_tags', [])
         
         if not new_tags:
-            print(f"   ❌ FATAL ERROR: No tags generated!")
-            print(f"   💥 FAILING HARD - TASK MUST GENERATE TAGS!")
+            print("   ❌ FATAL ERROR: No tags generated!")
+            print("   💥 FAILING HARD - TASK MUST GENERATE TAGS!")
             raise RuntimeError(f"Task '{task_name}' generated no tags")
         
         # Update the task with new tags (keep quality score unchanged)
@@ -164,8 +163,8 @@ def process_all_tasks(start_index: int = 0, save_every: int = 1):
             print(f"📊 Stats: {updated_count} updated, {error_count} errors, {skipped_count} skipped")
     
     # Final save
-    print(f"\n🎉 Completed processing all tasks!")
-    print(f"📊 Final stats:")
+    print("\n🎉 Completed processing all tasks!")
+    print("📊 Final stats:")
     print(f"   • Tasks processed: {processed_count}")
     print(f"   • Tags updated: {updated_count}")
     print(f"   • Errors: {error_count}")

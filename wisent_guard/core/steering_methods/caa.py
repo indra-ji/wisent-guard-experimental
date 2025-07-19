@@ -110,7 +110,7 @@ class CAA(SteeringMethod):
         steering_vector = self.steering_vector.to(activations.device)
         
         if verbose:
-            print(f"\n🔍 CAA apply_steering called:")
+            print("\n🔍 CAA apply_steering called:")
             print(f"   Input shape: {activations.shape}")
             print(f"   Strength: {strength}")
             print(f"   Vector norm: {torch.norm(steering_vector).item():.4f}")
@@ -125,7 +125,7 @@ class CAA(SteeringMethod):
                 before_norm = torch.norm(steered[:, -2:-1, :], dim=-1).mean().item()
                 
                 # LOG THE ACTUAL STEERING BEING APPLIED
-                print(f"\n   🎯 CAA APPLYING STEERING:")
+                print("\n   🎯 CAA APPLYING STEERING:")
                 print(f"      Strength parameter: {strength}")
                 print(f"      Vector norm: {torch.norm(steering_vector).item():.4f}")
                 print(f"      Effective addition norm: {torch.norm(strength * steering_vector).item():.4f}")
@@ -139,7 +139,7 @@ class CAA(SteeringMethod):
                 
                 # Check if we created inf/nan
                 if torch.any(torch.isinf(steered)) or torch.any(torch.isnan(steered)):
-                    print(f"      ⚠️ CRITICAL: Steering created inf/nan values!")
+                    print("      ⚠️ CRITICAL: Steering created inf/nan values!")
                     print(f"      Max in steered: {steered.max().item()}")
                     print(f"      Min in steered: {steered.min().item()}")
             else:

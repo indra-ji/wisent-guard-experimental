@@ -10,13 +10,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple, Optional, Any
 from datetime import datetime
-from pathlib import Path
 
-import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 from .model import Model
-from .layer import Layer
 from .classifier import Classifier
 from .contrastive_pairs import ContrastivePairSet
 from .model_config_manager import ModelConfigManager
@@ -176,13 +173,11 @@ class SampleSizeOptimizer:
         # Create contrastive pairs from QA pairs
         from .activation_collection_method import (
             ActivationCollectionLogic, 
-            PromptConstructionStrategy,
             TokenTargetingStrategy
         )
         collector = ActivationCollectionLogic(model=self.model)
         
         # Import token aggregation function
-        from .parser import aggregate_token_scores
         
         # Create contrastive pairs
         all_pairs = []

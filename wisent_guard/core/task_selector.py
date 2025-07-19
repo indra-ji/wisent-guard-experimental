@@ -3,10 +3,9 @@ Task selector for choosing tasks based on skills and risks tags.
 """
 
 import json
-import os
 import random
 import logging
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any, Optional
 from pathlib import Path
 
 logger = logging.getLogger(__name__)

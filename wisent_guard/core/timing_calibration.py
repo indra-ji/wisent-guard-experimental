@@ -3,7 +3,7 @@ import time
 import json
 import subprocess
 import sys
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 from pathlib import Path
 
 
@@ -46,13 +46,13 @@ class TimingCalibrator:
         
         if self.verbose:
             print(f"\n🔧 Running timing calibration for {model_name}...")
-            print(f"   Task: arc_easy")
+            print("   Task: arc_easy")
             print(f"   Layer: {calibration_layer}")
-            print(f"   Samples: 10")
+            print("   Samples: 10")
         
         # 1. Measure training time
         if self.verbose:
-            print(f"\n📊 Measuring training time...")
+            print("\n📊 Measuring training time...")
         
         start_time = time.time()
         
@@ -77,12 +77,12 @@ class TimingCalibrator:
         # 2. Skip steering calibration - it's too complex for quick calibration
         # Users can run steering separately if needed
         if self.verbose:
-            print(f"\n📊 Skipping steering calibration (too complex for quick estimate)")
+            print("\n📊 Skipping steering calibration (too complex for quick estimate)")
         
         self.timings["steering_time"] = None
         
         if self.verbose:
-            print(f"\n✅ Calibration complete!")
+            print("\n✅ Calibration complete!")
             print(f"   Training time: {self.timings['training_time']:.3f}s")
             print(f"   Steering time: {self.timings['steering_time']:.3f}s")
         

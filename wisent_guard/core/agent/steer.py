@@ -9,7 +9,7 @@ This module handles:
 """
 
 from dataclasses import dataclass
-from typing import List, Dict, Any, Callable, Awaitable
+from typing import List, Dict, Callable, Awaitable
 from .diagnose import AnalysisResult
 
 
@@ -84,7 +84,7 @@ class ResponseSteering:
         
         # Success metrics (can be enabled for debugging)
         if False:  # Set to True for detailed debugging
-            print(f"   🔧 Regeneration debug:")
+            print("   🔧 Regeneration debug:")
             print(f"      Original quality: {analysis.quality_score:.3f}")
             print(f"      New quality: {new_analysis.quality_score:.3f}")
             print(f"      Improvement score: {improvement_score:.3f}")
@@ -145,7 +145,7 @@ Ensure your response avoids the types of errors shown in the correction examples
         
         # Success metrics (can be enabled for debugging)
         if False:  # Set to True for detailed debugging
-            print(f"   🔧 Steering debug:")
+            print("   🔧 Steering debug:")
             print(f"      Original quality: {analysis.quality_score:.3f}")
             print(f"      New quality: {new_analysis.quality_score:.3f}")
             print(f"      Improvement score: {improvement_score:.3f}")

@@ -14,12 +14,10 @@ Uses existing infrastructure:
 - create_testing_responses.py for test data generation
 """
 
-import os
 import sys
 import json
 import pickle
 import torch
-import time
 import argparse
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
@@ -73,7 +71,7 @@ class ComprehensiveModelEvaluator:
         # Delay TestingResponseGenerator initialization to avoid loading model in parent process
         self.response_generator = None  # Will be initialized when needed
         
-        print(f"🔬 Comprehensive Model Evaluator")
+        print("🔬 Comprehensive Model Evaluator")
         print(f"   Model: {model_name}")
         print(f"   Classifiers: {self.classifiers_dir}")
         print(f"   Test responses: {self.test_responses_dir}")
@@ -104,7 +102,7 @@ class ComprehensiveModelEvaluator:
                     'location': str(benchmarks_dir)
                 }
         
-        print(f"\n📥 Benchmark data not found - downloading automatically...")
+        print("\n📥 Benchmark data not found - downloading automatically...")
         print(f"   📁 Will download to: {benchmarks_dir}")
         
         try:
@@ -112,7 +110,7 @@ class ComprehensiveModelEvaluator:
             downloader = FullBenchmarkDownloader(download_dir=str(self.script_dir / "full_benchmarks"))
             
             # Download all benchmarks
-            print(f"🔄 Downloading all available benchmarks (this may take several minutes)...")
+            print("🔄 Downloading all available benchmarks (this may take several minutes)...")
             results = downloader.download_all_benchmarks(
                 benchmarks=None,  # Download all
                 force=force_redownload
@@ -131,7 +129,7 @@ class ComprehensiveModelEvaluator:
                     'details': results
                 }
             else:
-                print(f"❌ Failed to download benchmarks")
+                print("❌ Failed to download benchmarks")
                 print(f"   Successful: {len(results['successful'])}")
                 print(f"   Failed: {len(results['failed'])}")
                 
@@ -149,13 +147,13 @@ class ComprehensiveModelEvaluator:
                         'details': results
                     }
                 else:
-                    raise Exception(f"No benchmarks were successfully downloaded")
+                    raise Exception("No benchmarks were successfully downloaded")
                     
         except Exception as e:
             print(f"❌ Error downloading benchmarks: {e}")
-            print(f"\n💡 Manual solution:")
+            print("\n💡 Manual solution:")
             print(f"   cd {self.script_dir}")
-            print(f"   python download_full_benchmarks.py --all")
+            print("   python download_full_benchmarks.py --all")
             raise Exception(f"Failed to automatically download benchmarks: {e}")
     
     def get_available_benchmarks(self) -> List[str]:
@@ -177,7 +175,7 @@ class ComprehensiveModelEvaluator:
         Returns:
             Dictionary with coverage information
         """
-        print(f"\n📊 Checking classifier coverage...")
+        print("\n📊 Checking classifier coverage...")
         print(f"   Benchmarks: {len(benchmarks)}")
         print(f"   Layers: {len(layers)}")
         
@@ -245,7 +243,7 @@ class ComprehensiveModelEvaluator:
             Training results
         """
         if not missing_classifiers:
-            print(f"✅ No missing classifiers to train!")
+            print("✅ No missing classifiers to train!")
             return {'trained': 0, 'failed': 0, 'details': []}
         
         print(f"\n🏗️ Training {len(missing_classifiers)} missing classifiers...")
@@ -279,7 +277,7 @@ class ComprehensiveModelEvaluator:
             training_results['failed'] += len(benchmark_results['failed']) + len(benchmark_results['errors'])
             training_results['details'].append(benchmark_results)
         
-        print(f"\n📊 Training Summary:")
+        print("\n📊 Training Summary:")
         print(f"   ✅ Successfully trained: {training_results['trained']}")
         print(f"   ❌ Failed to train: {training_results['failed']}")
         
@@ -297,7 +295,7 @@ class ComprehensiveModelEvaluator:
         Returns:
             Test response generation results
         """
-        print(f"\n🧪 Checking test response coverage...")
+        print("\n🧪 Checking test response coverage...")
         
         missing_responses = []
         for benchmark in benchmarks:
@@ -308,15 +306,15 @@ class ComprehensiveModelEvaluator:
                 missing_responses.append(benchmark)
         
         if not missing_responses:
-            print(f"   ✅ All test responses exist!")
+            print("   ✅ All test responses exist!")
             return {'generated': 0, 'already_existed': len(benchmarks)}
 
         print(f"   ❌ Missing responses for {len(missing_responses)} benchmarks")
-        print(f"   🔧 Generating test responses...")
+        print("   🔧 Generating test responses...")
         
         # Initialize response generator only when needed (to avoid loading model in parent process)
         if self.response_generator is None:
-            print(f"   📥 Initializing response generator...")
+            print("   📥 Initializing response generator...")
             self.response_generator = TestingResponseGenerator(self.model_name, str(self.test_responses_dir))
 
         # Generate missing test responses
@@ -443,7 +441,7 @@ class ComprehensiveModelEvaluator:
         Returns:
             Comprehensive evaluation results
         """
-        print(f"\n🔬 Evaluating all classifiers...")
+        print("\n🔬 Evaluating all classifiers...")
         
         evaluation_results = {
             'model_name': self.model_name,
@@ -573,24 +571,24 @@ class ComprehensiveModelEvaluator:
     def print_evaluation_summary(self, results: Dict[str, Any]):
         """Print a summary of evaluation results."""
         print(f"\n{'='*80}")
-        print(f"🔬 COMPREHENSIVE EVALUATION SUMMARY")
+        print("🔬 COMPREHENSIVE EVALUATION SUMMARY")
         print(f"{'='*80}")
         
         summary = results['summary']
-        print(f"📊 Overall Performance:")
+        print("📊 Overall Performance:")
         print(f"   Total classifiers: {summary['total_classifiers']}")
         print(f"   Successful evaluations: {summary['successful_evaluations']}")
         print(f"   Failed evaluations: {summary['failed_evaluations']}")
         print(f"   Average accuracy: {summary['avg_accuracy']:.3f}")
         print(f"   Average F1 score: {summary['avg_f1_score']:.3f}")
         
-        print(f"\n📋 Benchmark Performance:")
+        print("\n📋 Benchmark Performance:")
         for benchmark, result in results['benchmark_results'].items():
             if 'summary' in result and result['summary']:
                 summary = result['summary']
                 print(f"   • {benchmark}: Acc={summary['avg_accuracy']:.3f}, F1={summary['avg_f1_score']:.3f} ({summary['num_layers_evaluated']} layers)")
         
-        print(f"\n🧠 Layer Performance:")
+        print("\n🧠 Layer Performance:")
         for layer, result in results['layer_results'].items():
             print(f"   • Layer {layer}: Acc={result['avg_accuracy']:.3f}, F1={result['avg_f1_score']:.3f} ({result['num_benchmarks']} benchmarks)")
         
@@ -605,7 +603,7 @@ class ComprehensiveModelEvaluator:
             if best_performances:
                 best_performances.sort(key=lambda x: x[2], reverse=True)
                 best_benchmark, best_layer, best_f1 = best_performances[0]
-                print(f"\n🏆 Best Performance:")
+                print("\n🏆 Best Performance:")
                 print(f"   {best_benchmark} at layer {best_layer}: F1={best_f1:.3f}")
     
     def run_comprehensive_evaluation(self, benchmarks: Optional[List[str]] = None,
@@ -626,7 +624,7 @@ class ComprehensiveModelEvaluator:
         Returns:
             Complete evaluation results
         """
-        print(f"🚀 Starting Comprehensive Model Evaluation")
+        print("🚀 Starting Comprehensive Model Evaluation")
         print(f"{'='*80}")
         
         # Step 0: Ensure benchmark data is downloaded
@@ -643,10 +641,10 @@ class ComprehensiveModelEvaluator:
         benchmarks = [b for b in benchmarks if b in available_benchmarks]
         
         if not benchmarks:
-            print(f"❌ No valid benchmarks found!")
+            print("❌ No valid benchmarks found!")
             return {}
         
-        print(f"📊 Evaluation Configuration:")
+        print("📊 Evaluation Configuration:")
         print(f"   Model: {self.model_name}")
         print(f"   Benchmarks: {len(benchmarks)}")
         print(f"   Layers: {len(layers)}")
@@ -700,7 +698,7 @@ class ComprehensiveModelEvaluator:
         results_file = self.save_evaluation_results(complete_results)
         self.print_evaluation_summary(evaluation_results)
         
-        print(f"\n🎉 Comprehensive evaluation completed!")
+        print("\n🎉 Comprehensive evaluation completed!")
         print(f"📁 Results saved to: {results_file}")
         
         return complete_results
@@ -717,7 +715,7 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"🔬 Comprehensive Model Evaluation")
+    print("🔬 Comprehensive Model Evaluation")
     print(f"{'='*80}")
     
     # Initialize evaluator with sensible defaults
@@ -739,12 +737,12 @@ def main():
         )
         
         if results:
-            print(f"\n✅ Evaluation completed successfully!")
+            print("\n✅ Evaluation completed successfully!")
         else:
-            print(f"\n❌ Evaluation failed!")
+            print("\n❌ Evaluation failed!")
             
     except KeyboardInterrupt:
-        print(f"\n❌ Evaluation interrupted by user")
+        print("\n❌ Evaluation interrupted by user")
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         raise

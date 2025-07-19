@@ -8,7 +8,7 @@ import logging
 import json
 import os
 import sys
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 from pathlib import Path
 import tempfile
 import subprocess
@@ -120,7 +120,6 @@ class BigCodeTask:
         """Load task data from BigCode."""
         try:
             # Import BigCode modules
-            import bigcode_eval
             from bigcode_eval.tasks import get_task
             
             # Get the task

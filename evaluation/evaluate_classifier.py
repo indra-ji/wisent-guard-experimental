@@ -10,7 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 import argparse
-from sklearn.metrics import confusion_matrix, classification_report
 import warnings
 
 # Ignore specific warnings
@@ -92,12 +91,12 @@ def evaluate_classifier(results_file=None, score_source="human"):
     
     print("\nConfusion Matrix:")
     print(f"               | {score_type}: Correct | {score_type}: Incorrect |")
-    print(f"---------------|----------------|------------------|")
+    print("---------------|----------------|------------------|")
     print(f"Model: Blocked |      {false_positives:4d}       |        {true_positives:4d}        |")
     print(f"Model: Allowed |      {true_negatives:4d}       |        {false_negatives:4d}        |")
     
     # Add net impact analysis
-    print(f"\n===== Net Impact of Using Classifier =====")
+    print("\n===== Net Impact of Using Classifier =====")
     
     # Calculate totals by evaluation scores
     correct_responses = total_correct
@@ -220,7 +219,7 @@ def evaluate_classifier(results_file=None, score_source="human"):
     
     if blocked_count != total_blocked:
         print(f"WARNING: Sum of blocked responses in data ({blocked_count}) doesn't match confusion matrix ({total_blocked})")
-        print(f"This may indicate inconsistencies in the data or different counting methods.")
+        print("This may indicate inconsistencies in the data or different counting methods.")
     
     blocked_rate = blocked_count / total if total > 0 else 0
     
@@ -239,7 +238,7 @@ def evaluate_classifier(results_file=None, score_source="human"):
                 print(f"  - {reason}: {reason_count} instances")
     
     # Analysis 5: Visualize probability scores vs. evaluation scores
-    print(f"\n===== Probability Score Visualization =====")
+    print("\n===== Probability Score Visualization =====")
     
     # Extract probability scores from reason field
     prob_scores = []

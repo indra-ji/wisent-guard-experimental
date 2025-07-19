@@ -2,7 +2,6 @@
 Model loading utilities for Wisent Guard examples
 """
 
-import os
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 

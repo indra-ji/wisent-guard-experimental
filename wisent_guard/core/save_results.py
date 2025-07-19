@@ -161,11 +161,11 @@ def save_classification_results_csv(results: Dict[str, Any], output_path: str) -
             print(f"   • {len(csv_rows)} responses exported")
             if is_multi_layer:
                 print(f"   • Multi-layer format with columns for layers: {sorted_layers}")
-                print(f"   • Token scores, aggregated scores, and predictions saved per layer")
+                print("   • Token scores, aggregated scores, and predictions saved per layer")
             else:
-                print(f"   • Single-layer format")
-            print(f"   • Fill in the 'ground_truth' column with: 'TRUTHFUL' or 'HALLUCINATION'")
-            print(f"   • Use for manual evaluation and classifier optimization")
+                print("   • Single-layer format")
+            print("   • Fill in the 'ground_truth' column with: 'TRUTHFUL' or 'HALLUCINATION'")
+            print("   • Use for manual evaluation and classifier optimization")
         else:
             logger.info("No classification results to export (steering mode or empty results)")
         
@@ -206,7 +206,7 @@ def create_evaluation_report(results: Dict[str, Any], output_path: str) -> None:
                 f.write(f"\n## {task_name}\n\n")
                 
                 if task_results is None:
-                    f.write(f"**Error**: Task results are None\n")
+                    f.write("**Error**: Task results are None\n")
                 elif isinstance(task_results, dict) and "error" in task_results:
                     f.write(f"**Error**: {task_results['error']}\n")
                 elif isinstance(task_results, dict):

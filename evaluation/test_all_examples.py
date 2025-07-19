@@ -15,10 +15,7 @@ import os
 import sys
 import json
 import argparse
-import torch
-import time
 from datetime import datetime
-from transformers import AutoTokenizer, AutoModelForCausalLM
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -76,7 +73,7 @@ def test_detector(model, tokenizer, training_pairs, test_statements, ground_trut
     print(f"\n===== Testing {content_type} Detector =====")
     
     # Create directory structure
-    os.makedirs(f"./models", exist_ok=True)
+    os.makedirs("./models", exist_ok=True)
     os.makedirs(f"./{content_type.replace(' ', '_')}_detector_data", exist_ok=True)
     
     # Create configuration for the detector

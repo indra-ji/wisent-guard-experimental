@@ -18,8 +18,7 @@ import os
 import sys
 import time
 import traceback
-from typing import Dict, List, Optional, Tuple
-from pathlib import Path
+from typing import Dict, List
 import statistics
 
 # Add current directory to path to import local modules
@@ -198,7 +197,7 @@ def print_timing_summary(analysis: Dict):
     print("📊 BENCHMARK LOADING TIMING SUMMARY")
     print(f"{'='*80}")
     
-    print(f"\n📈 Overall Statistics:")
+    print("\n📈 Overall Statistics:")
     print(f"  Total benchmarks tested: {analysis['total_benchmarks']}")
     print(f"  Successful loads: {analysis['successful_loads']}")
     print(f"  Failed loads: {analysis['failed_loads']}")
@@ -206,7 +205,7 @@ def print_timing_summary(analysis: Dict):
     
     if analysis["timing_stats"]:
         stats = analysis["timing_stats"]
-        print(f"\n⏱️  Timing Statistics (successful loads only):")
+        print("\n⏱️  Timing Statistics (successful loads only):")
         print(f"  Mean loading time: {stats['mean_time']:.2f}s")
         print(f"  Median loading time: {stats['median_time']:.2f}s")
         print(f"  Fastest load: {stats['min_time']:.2f}s")
@@ -214,25 +213,25 @@ def print_timing_summary(analysis: Dict):
         print(f"  Standard deviation: {stats['std_dev']:.2f}s")
         print(f"  Total time: {stats['total_time']:.2f}s")
         
-        print(f"\n🚀 Fastest Benchmarks:")
+        print("\n🚀 Fastest Benchmarks:")
         for i, benchmark in enumerate(analysis["fastest_benchmarks"], 1):
             print(f"  {i}. {benchmark['name']} - {benchmark['time']:.2f}s ({benchmark['samples']} samples)")
             print(f"     Tags: {', '.join(benchmark['tags'])}")
         
-        print(f"\n🐌 Slowest Benchmarks:")
+        print("\n🐌 Slowest Benchmarks:")
         for i, benchmark in enumerate(analysis["slowest_benchmarks"], 1):
             print(f"  {i}. {benchmark['name']} - {benchmark['time']:.2f}s ({benchmark['samples']} samples)")
             print(f"     Tags: {', '.join(benchmark['tags'])}")
     
     if analysis["category_stats"]:
-        print(f"\n🏷️  Performance by Category:")
+        print("\n🏷️  Performance by Category:")
         sorted_categories = sorted(analysis["category_stats"].items(), 
                                  key=lambda x: x[1]["mean_time"])
         for category, stats in sorted_categories:
             print(f"  {category}: {stats['mean_time']:.2f}s avg ({stats['count']} benchmarks)")
     
     if analysis["failed_benchmarks"]:
-        print(f"\n❌ Failed Benchmarks:")
+        print("\n❌ Failed Benchmarks:")
         for benchmark in analysis["failed_benchmarks"]:
             print(f"  • {benchmark['name']} ({benchmark['task']})")
             print(f"    Error: {benchmark['error']}")
@@ -278,7 +277,7 @@ def main():
     total_time = time.time() - total_start_time
     
     # Analyze results
-    print(f"\n🔍 Analyzing results...")
+    print("\n🔍 Analyzing results...")
     analysis = analyze_timing_results(results)
     analysis["total_script_time"] = total_time
     

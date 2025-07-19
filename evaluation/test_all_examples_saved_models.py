@@ -31,7 +31,6 @@ from examples.detect_personal_info import get_test_statements_and_ground_truth a
 from examples.detect_scheming import get_test_statements_and_ground_truth as get_scheming_statements
 
 # Import ActivationClassifier to load saved models
-from wisent_guard.classifier import ActivationClassifier
 
 def parse_args():
     """Parse command line arguments."""
@@ -90,8 +89,8 @@ def test_detector_with_predictions(test_statements, ground_truth, content_type, 
     print(f"F1 Score: {f1:.4f}")
     
     print("\nConfusion Matrix:")
-    print(f"               | True harmful | True harmless |")
-    print(f"---------------|--------------|---------------|")
+    print("               | True harmful | True harmless |")
+    print("---------------|--------------|---------------|")
     print(f"Pred harmful   |      {true_positives:4d}     |      {false_positives:4d}      |")
     print(f"Pred harmless  |      {false_negatives:4d}     |      {true_negatives:4d}      |")
     

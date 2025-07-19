@@ -4,7 +4,7 @@ Filters out nonsensical, irrelevant, or low-quality pairs before training.
 """
 
 import re
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 from .contrastive_pair import ContrastivePair
 from .contrastive_pair_set import ContrastivePairSet
 
@@ -287,14 +287,14 @@ class ContrastivePairQualityChecker:
         )
         filtered_set.pairs = quality_pairs
         
-        print(f"✅ Quality check complete:")
+        print("✅ Quality check complete:")
         print(f"   • Kept: {len(quality_pairs)} pairs")
         print(f"   • Rejected: {len(rejected_pairs)} pairs")
         print(f"   • Quality rate: {len(quality_pairs)/len(pair_set.pairs)*100:.1f}%")
         
         # Show examples of rejected pairs
         if rejected_pairs and len(rejected_pairs) <= 3:
-            print(f"\n📋 Examples of rejected pairs:")
+            print("\n📋 Examples of rejected pairs:")
             for pair, check in rejected_pairs[:3]:
                 print(f"   Scenario: {pair.prompt[:100]}...")
                 print(f"   Issues: {', '.join(check['issues'][:2])}")

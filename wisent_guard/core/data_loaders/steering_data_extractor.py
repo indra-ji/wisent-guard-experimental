@@ -3,7 +3,7 @@ Steering data extractor that converts LiveCodeBench problems to contrastive pair
 """
 
 import logging
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any
 from dataclasses import dataclass
 
 from .livecodebench_loader import LiveCodeBenchProblem

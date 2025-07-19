@@ -1,5 +1,4 @@
 """Time estimation for optimization operations using runtime calibration"""
-import time
 from typing import Dict, Tuple, Optional
 from pathlib import Path
 
@@ -139,7 +138,7 @@ class OptimizationTimeEstimator:
     
     def print_time_breakdown(self, total_time: float, breakdown: Dict[str, float]):
         """Print a formatted time breakdown"""
-        print(f"\n⏱️  ESTIMATED OPTIMIZATION TIME:")
+        print("\n⏱️  ESTIMATED OPTIMIZATION TIME:")
         print(f"   Total: {self.format_time(total_time)}")
         
         if len(breakdown) > 1:

@@ -5,10 +5,9 @@ Based on the paper "Steering Language Models in Multiple Directions Simultaneous
 by lukemarks, Narmeen, and Amirali Abdullah.
 """
 
-from typing import Dict, Any, Optional, List, Union
+from typing import Dict, Any, Optional, List
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from .base import SteeringMethod
 from ..contrastive_pairs import ContrastivePairSet
@@ -325,7 +324,7 @@ class KSteering(SteeringMethod):
                         # Preserve original requires_grad setting
                         result = result.requires_grad_(activations.requires_grad)
                         
-                except RuntimeError as e:
+                except RuntimeError:
                     # Fallback to original activations if gradient computation fails
                     result = activations.clone()
                 

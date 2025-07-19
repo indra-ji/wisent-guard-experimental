@@ -3,7 +3,7 @@ Benchmark configuration and result structures for evaluation orchestration.
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 from enum import Enum
 from datetime import datetime
 import json

@@ -15,7 +15,6 @@ import pickle
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
-from ...model_persistence import ModelPersistence
 
 
 @dataclass
@@ -443,7 +442,7 @@ class ClassifierSelector:
         if not self.discovered_classifiers:
             return "No classifiers discovered yet. Run discover_classifiers() first."
         
-        summary = f"\n📊 Classifier Discovery Summary\n"
+        summary = "\n📊 Classifier Discovery Summary\n"
         summary += f"{'='*50}\n"
         summary += f"Total Classifiers: {len(self.discovered_classifiers)}\n\n"
         
