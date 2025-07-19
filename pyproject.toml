@@ -13,6 +13,7 @@ dependencies = [
     "nltk>=3.8.0",
     "numpy>=1.21.0",
     "pandas>=1.2.0",
+    "pre-commit>=4.2.0",
     "pytest>=6.0.0",
     "pyyaml>=5.4.0",
     "requests>=2.25.0",
