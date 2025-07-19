@@ -1,3 +1,11 @@
+[project]
+name = "wisent-guard-experimental"
+version = "0.1.0"
+description = "My version of the WisentGuard OS repo"
+readme = "README.md"
+requires-python = ">= 3.9"
+dependencies = []
+
 [tool.pytest.ini_options]
 testpaths = ["wisent_guard/tests"]
 python_files = ["test_*.py"]
